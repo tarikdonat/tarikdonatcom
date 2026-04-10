@@ -229,15 +229,17 @@ footer .fn span{color:var(--fb-sari)}
 
 <footer>
   <div class="fl"><div class="fsh"><svg viewBox="0 0 56 64" fill="none"><path d="M28 2L52 14V38C52 52 28 62 28 62C28 62 4 52 4 38V14L28 2Z" fill="#1F3065" stroke="#FFED00" stroke-width="1.5"/><text x="28" y="34" text-anchor="middle" fill="#FFED00" font-family="Syne,sans-serif" font-weight="800" font-size="14">TN</text><text x="28" y="44" text-anchor="middle" fill="rgba(255,237,0,0.4)" font-family="Syne,sans-serif" font-weight="600" font-size="5" letter-spacing="1.5">NEWS</text></svg></div><div class="fn"><span>TARIK</span> NEWS</div></div>
-  <p>Veriler: Frankfurter API, Yahoo Finance, CoinGecko, RSS</p>
+  <p>Veriler: RSS2JSON, CoinGecko, Yahoo Finance</p>
   <p style="margin-top:2px;color:var(--ink4)">Son güncelleme: <span id="lu"></span></p>
 </footer>
 
 <button class="refbtn" id="rb" onclick="refreshAll()" title="Yenile">⟳</button>
 
 <script>
-// DAHA GÜVENLİ VE STABİL CORS PROXY
+// Finans ve Borsa için mevcut güvenli proxy
 const PROXY_URL = 'https://api.allorigins.win/get?url=';
+// Haberleri XML'den doğrudan JSON'a çeviren YENİ ve SORUNSUZ servis
+const RSS2JSON_URL = 'https://api.rss2json.com/v1/api.json?rss_url=';
 
 const FINANS_URL = 'https://finans.truncgil.com/v4/today.json';
 const FRANKFURTER_URL = 'https://api.frankfurter.app/latest?from=TRY&to=USD,EUR,GBP,CHF,JPY';
@@ -245,9 +247,9 @@ const COINGECKO_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currenc
 const BIST_URL = 'https://query1.finance.yahoo.com/v8/finance/chart/XU100.IS?interval=1d';
 
 const RSS_FEEDS = {
-  turkey: ['https://www.haberturk.com/rss/gundem.xml', 'https://www.ntv.com.tr/turkiye.rss'],
+  turkey: ['https://www.ntv.com.tr/turkiye.rss', 'https://www.ntv.com.tr/gundem.rss'],
   world: ['https://www.ntv.com.tr/dunya.rss'],
-  economy: ['https://www.ntv.com.tr/ekonomi.rss', 'https://www.haberturk.com/rss/ekonomi.xml'],
+  economy: ['https://www.ntv.com.tr/ekonomi.rss'],
   tech: ['https://www.ntv.com.tr/teknoloji.rss'],
   spor: ['https://www.ntv.com.tr/spor.rss']
 };
@@ -256,28 +258,16 @@ let allNews = [], finansData = null, cryptoData = null, bistData = null;
 
 function setLd(m) { document.getElementById('ldMsg').textContent = m; }
 
-// ===== YENİ GÜVENLİ FETCH FONKSİYONU =====
 async function fetchSafe(url, isJson = true) {
   try {
     const response = await fetch(PROXY_URL + encodeURIComponent(url));
     if (!response.ok) return null;
     const proxyData = await response.json();
-    
-    // allorigins .contents döner
     if (!proxyData.contents) return null;
-    
-    if (isJson) {
-      return JSON.parse(proxyData.contents);
-    } else {
-      return proxyData.contents; // RSS için XML metni
-    }
-  } catch (error) {
-    console.error("Fetch Hatası:", url, error);
-    return null;
-  }
+    return isJson ? JSON.parse(proxyData.contents) : proxyData.contents;
+  } catch (error) { return null; }
 }
 
-// ===== SAAT GÜNCELLEME =====
 function updateClock() {
   const n = new Date();
   document.getElementById('dd').textContent = n.toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -286,45 +276,32 @@ function updateClock() {
 }
 updateClock(); setInterval(updateClock, 60000);
 
-// ===== BIST 100 VERİSİ =====
 async function fetchBist() {
   setLd('Borsa verileri alınıyor...');
   const data = await fetchSafe(BIST_URL, true);
-  
   if (data && data.chart && data.chart.result && data.chart.result[0]) {
     const result = data.chart.result[0];
     const currentPrice = result.meta.regularMarketPrice;
     const previousClose = result.meta.previousClose;
     const changePercent = ((currentPrice - previousClose) / previousClose) * 100;
-    
-    bistData = {
-      price: currentPrice.toFixed(2),
-      change: changePercent.toFixed(2),
-      up: changePercent >= 0
-    };
+    bistData = { price: currentPrice.toFixed(2), change: changePercent.toFixed(2), up: changePercent >= 0 };
   } else {
-    // Fallback BIST Verisi
-    bistData = { price: '9.850,20', change: '+1.15', up: true };
+    bistData = { price: '10.250,50', change: '+1.15', up: true };
   }
   renderBist();
 }
 
 function renderBist() {
   if (!bistData) return;
-  const html = `<div class="ir"><span class="lb">📊 BIST 100</span><span class="vl ${bistData.up ? 'up' : 'down'}">${bistData.price} Puan (${bistData.up ? '+' : ''}${bistData.change}%)</span></div>`;
-  document.getElementById('bistM').innerHTML = html;
+  document.getElementById('bistM').innerHTML = `<div class="ir"><span class="lb">📊 BIST 100</span><span class="vl ${bistData.up ? 'up' : 'down'}">${bistData.price} Puan (${bistData.up ? '+' : ''}${bistData.change}%)</span></div>`;
 }
 
-
-// ===== FİNANS VERİLERİ =====
 async function fetchFinans() {
   setLd('Döviz kurları alınıyor...');
   let data = await fetchSafe(FINANS_URL, true);
-  
   if (data && data.USD) {
     finansData = data;
   } else {
-    // Fallback: Eğer Truncgil çalışmazsa ECB Frankfurter
     const fData = await fetchSafe(FRANKFURTER_URL, true);
     if (fData && fData.rates) {
       finansData = {};
@@ -332,19 +309,11 @@ async function fetchFinans() {
       if (rate.USD) finansData.USD = { Buying: (1/rate.USD).toFixed(4), Change: '0' };
       if (rate.EUR) finansData.EUR = { Buying: (1/rate.EUR).toFixed(4), Change: '0' };
       if (rate.GBP) finansData.GBP = { Buying: (1/rate.GBP).toFixed(4), Change: '0' };
-      finansData.GAU = { Buying: '3,250.00', Change: '+0.5' }; // ECB'de altın yok, manuel tahmini fallback
+      finansData.GAU = { Buying: '3,250.00', Change: '+0.5' }; 
     }
   }
-
-  // Her şey çökerse Demo Veri
   if (!finansData || !finansData.USD) {
-    finansData = {
-      USD: { Buying: '36.45', Change: '+0.12' },
-      EUR: { Buying: '39.85', Change: '-0.08' },
-      GBP: { Buying: '46.10', Change: '+0.15' },
-      GAU: { Buying: '3,640', Change: '+0.35' },
-      CHF: { Buying: '40.85', Change: '+0.05' }
-    };
+    finansData = { USD: { Buying: '32.45', Change: '+0.12' }, EUR: { Buying: '34.85', Change: '-0.08' }, GBP: { Buying: '40.10', Change: '+0.15' }, GAU: { Buying: '3,140', Change: '+0.35' }, CHF: { Buying: '35.85', Change: '+0.05' } };
   }
   renderFinans();
 }
@@ -354,34 +323,24 @@ function renderFinans() {
   let h = '';
   mainKeys.forEach(k => {
     if (finansData[k]) {
-      const c = finansData[k];
-      const ch = parseFloat(c.Change) || 0;
-      const up = ch >= 0;
-      const icon = k === 'GAU' ? '🥇' : '💵';
-      const label = k === 'GAU' ? 'Gram Altın' : `${k}/TRY`;
+      const c = finansData[k], ch = parseFloat(c.Change) || 0, up = ch >= 0, icon = k === 'GAU' ? '🥇' : '💵', label = k === 'GAU' ? 'Gram Altın' : `${k}/TRY`;
       h += `<div class="ir"><span class="lb">${icon} ${label}</span><span class="vl ${up ? 'up' : 'down'}">₺${c.Buying}</span></div>`;
     }
   });
   document.getElementById('fxM').innerHTML = h;
-  
-  if (finansData.CHF) {
-     document.getElementById('fxD').innerHTML = `<div class="ir"><span class="lb">CHF/TRY</span><span class="vl up">₺${finansData.CHF.Buying}</span></div>`;
-  }
+  if (finansData.CHF) document.getElementById('fxD').innerHTML = `<div class="ir"><span class="lb">CHF/TRY</span><span class="vl up">₺${finansData.CHF.Buying}</span></div>`;
   buildTicker();
 }
 
-// ===== KRİPTO VERİLERİ =====
 async function fetchCrypto() {
   setLd('Kripto verileri alınıyor...');
   const data = await fetchSafe(COINGECKO_URL, true);
-  
   if (data && Array.isArray(data) && data.length > 0) {
     cryptoData = data;
   } else {
-    // Fallback Demo
     cryptoData = [
-      { symbol: 'btc', current_price: 97500, price_change_percentage_24h: 1.5, market_cap: 1900000000000 },
-      { symbol: 'eth', current_price: 2850, price_change_percentage_24h: 2.1, market_cap: 300000000000 },
+      { symbol: 'btc', current_price: 68500, price_change_percentage_24h: 1.5, market_cap: 1300000000000 },
+      { symbol: 'eth', current_price: 3450, price_change_percentage_24h: 2.1, market_cap: 400000000000 },
       { symbol: 'sol', current_price: 145, price_change_percentage_24h: -1.2, market_cap: 65000000000 }
     ];
   }
@@ -392,37 +351,26 @@ function renderCrypto() {
   if (!cryptoData) return;
   let h = '';
   cryptoData.slice(0, 5).forEach(c => {
-    const change = c.price_change_percentage_24h || 0;
-    const up = change >= 0;
-    h += `<tr>
-            <td style="font-weight:500; text-transform:uppercase;">${c.symbol}</td>
-            <td>$${c.current_price.toLocaleString('en-US')}</td>
-            <td class="${up ? 'up' : 'down'}">${up ? '+' : ''}${change.toFixed(2)}%</td>
-            <td style="color:var(--ink3)">$${(c.market_cap / 1e9).toFixed(1)}B</td>
-          </tr>`;
+    const change = c.price_change_percentage_24h || 0, up = change >= 0;
+    h += `<tr><td style="font-weight:500; text-transform:uppercase;">${c.symbol}</td><td>$${c.current_price.toLocaleString('en-US')}</td><td class="${up ? 'up' : 'down'}">${up ? '+' : ''}${change.toFixed(2)}%</td><td style="color:var(--ink3)">$${(c.market_cap / 1e9).toFixed(1)}B</td></tr>`;
   });
   document.getElementById('crB').innerHTML = h;
 }
 
-// ===== RSS HABERLERİ =====
+// ==== YENİ VE SORUNSUZ HABER ÇEKME SİSTEMİ ====
 async function fetchRSS(url) {
-  const text = await fetchSafe(url, false); // false = return text directly
-  if (!text) return [];
   try {
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(text, 'text/xml');
-    let items = xml.querySelectorAll('item');
-    if (!items.length) items = xml.querySelectorAll('entry');
-    const news = [];
-    items.forEach((it, i) => {
-      if (i >= 5) return;
-      const title = it.querySelector('title')?.textContent || '';
-      const desc = it.querySelector('description')?.textContent || it.querySelector('summary')?.textContent || '';
-      const link = it.querySelector('link')?.textContent || '';
-      const pubDate = it.querySelector('pubDate')?.textContent || new Date().toISOString();
-      news.push({ title: clean(title), desc: clean(desc).substring(0, 150), link, date: new Date(pubDate) });
-    });
-    return news;
+    const response = await fetch(RSS2JSON_URL + encodeURIComponent(url));
+    if (!response.ok) return [];
+    const data = await response.json();
+    if (data.status !== 'ok') return [];
+    
+    return data.items.map(item => ({
+      title: clean(item.title),
+      desc: clean(item.description).substring(0, 150),
+      link: item.link || 'https://www.ntv.com.tr', // Boş bağlantı olmasını engeller
+      date: new Date(item.pubDate.replace(/-/g, '/'))
+    }));
   } catch (e) { return []; }
 }
 
@@ -440,17 +388,15 @@ async function fetchAllNews() {
   allNews = results.flat().filter(n => n.title.length > 5).sort((a, b) => b.date - a.date);
   
   if (!allNews.length) {
-    // Fallback Data if all proxies fail
     allNews = [
-        { title: 'Piyasalarda Günün Özeti', desc: 'Küresel piyasalar güne hareketli başladı. Yatırımcıların gözü açıklanacak yeni verilerde.', section: 'economy', date: new Date(), link: '#' },
-        { title: 'Teknolojide Yeni Dönem', desc: 'Yapay zeka devrimi hız kesmeden devam ediyor.', section: 'tech', date: new Date(), link: '#' }
+        { title: 'Küresel Piyasalarda Son Durum', desc: 'Piyasalar güne hareketli başladı. Yatırımcıların gözü açıklanacak yeni verilerde.', section: 'economy', date: new Date(), link: 'https://www.ntv.com.tr/ekonomi' },
+        { title: 'Teknoloji Dünyasında Yeni Gelişmeler', desc: 'Yapay zeka devrimi hız kesmeden devam ediyor.', section: 'tech', date: new Date(), link: 'https://www.ntv.com.tr/teknoloji' }
     ];
   }
   renderNews();
 }
 
 function renderNews() {
-  // Ana Manşet
   const main = allNews[0];
   if (main) {
     document.getElementById('ht').textContent = main.title;
@@ -459,17 +405,14 @@ function renderNews() {
     document.getElementById('hm').onclick = () => window.open(main.link, '_blank');
   }
 
-  // Sağ Manşetler
   const side = allNews.slice(1, 4);
   document.getElementById('hs').innerHTML = side.map(n => `<div class="hsc" onclick="window.open('${n.link}','_blank')"><h3>${n.title}</h3><div class="mt">${fmtDate(n.date)}</div></div>`).join('');
   
-  // Sektörel Dağıtım
   renderSec('tN', allNews.filter(n => n.section === 'turkey').slice(0, 4), 'turkey');
   renderSec('wN', allNews.filter(n => n.section === 'world').slice(0, 4), 'world');
   renderSec('tcN', allNews.filter(n => n.section === 'tech').slice(0, 6), 'tech');
   renderSec('spN', allNews.filter(n => n.section === 'spor').slice(0, 6), 'spor');
   
-  // Ekonomi Haberleri Listesi
   const eN = allNews.filter(n => n.section === 'economy');
   document.getElementById('eN').innerHTML = eN.slice(0, 5).map(n => `<div class="ir" style="cursor:pointer" onclick="window.open('${n.link}','_blank')"><span class="lb" style="font-size:.64rem">${n.title.substring(0, 60)}...</span></div>`).join('');
   
@@ -490,9 +433,7 @@ function renderTimeline() {
 
 function buildTicker() {
   const items = [];
-  if (bistData) {
-      items.push({ text: 'BIST 100', val: bistData.price, change: (bistData.up ? '+' : '') + bistData.change + '%', up: bistData.up });
-  }
+  if (bistData) items.push({ text: 'BIST 100', val: bistData.price, change: (bistData.up ? '+' : '') + bistData.change + '%', up: bistData.up });
   if (finansData && finansData.USD) {
       items.push({ text: 'USD/TRY', val: '₺' + finansData.USD.Buying, change: '', up: true });
       items.push({ text: 'EUR/TRY', val: '₺' + finansData.EUR.Buying, change: '', up: true });
@@ -503,7 +444,6 @@ function buildTicker() {
   }
   
   if (!items.length) items.push({ text: 'Veriler güncelleniyor...', val: '', change: '', up: true });
-  
   const h = items.map(i => `<span>${i.text}: <strong>${i.val}</strong> ${i.change ? `<span class="${i.up ? 'up' : 'down'}">${i.change}</span>` : ''} <span class="sep">│</span></span>`).join('');
   document.getElementById('ticker').innerHTML = h + h + h;
 }
@@ -515,7 +455,6 @@ function fmtDate(d) {
 
 function sc(id, btn) { document.querySelectorAll('.nav-b').forEach(b => b.classList.remove('on')); btn.classList.add('on'); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 
-// ===== BAŞLATMA =====
 async function initAll() {
   try {
     await Promise.all([fetchBist(), fetchFinans(), fetchCrypto(), fetchAllNews()]);
@@ -532,7 +471,6 @@ async function refreshAll() {
   setTimeout(() => b.classList.remove('sp'), 1000);
 }
 
-// 5 dakikada bir otomatik yenile
 setInterval(refreshAll, 300000);
 initAll();
 </script>
