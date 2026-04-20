@@ -6,175 +6,222 @@
 <title>Tarık Donat | Portal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1F3065">
 <style>
-  *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
-  :root {
-    --fb: #1F3065; --fb-koyu: #0d1a3a; --fb-sari: #FFED00;
-    --bg: #f5f0e8; --surface: #fffdf8;
-    --ink: #1a1612; --ink2: #4a4035; --border: #d8d0c2;
-  }
-  body {
-    font-family: 'DM Mono', monospace;
-    background: var(--bg);
-    color: var(--ink);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  
-  .portal-header {
-    text-align: center;
-    margin-bottom: 50px;
-  }
-  .portal-header h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 800;
-    letter-spacing: 2px;
-    color: var(--fb);
-    line-height: 1;
-  }
-  .portal-header h1 span { color: var(--fb-koyu); }
-  .portal-header p {
-    font-family: 'Instrument Serif', serif;
-    font-size: 1.4rem;
-    font-style: italic;
-    color: var(--ink2);
-    margin-top: 10px;
-  }
+ *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+ :root {
+ --fb: #1F3065; --fb-koyu: #0d1a3a; --fb-sari: #FFED00;
+ --bg: #f5f0e8; --surface: rgba(255, 253, 248, 0.6);
+ --ink: #1a1612; --ink2: #4a4035; --border: rgba(216, 208, 194, 0.5);
+ }
+ body {
+ font-family: 'DM Mono', monospace;
+ background: radial-gradient(circle at top left, #f5f0e8, #e8e2d6);
+ color: var(--ink);
+ min-height: 100vh;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ justify-content: center;
+ padding: 20px;
+ position: relative;
+ overflow-x: hidden;
+ }
+ 
+ /* Glassmorphism Arka Plan Süslemeleri */
+ body::before {
+ content: ''; position: absolute; top: -100px; right: -100px; width: 300px; height: 300px;
+ background: var(--fb); opacity: 0.05; border-radius: 50%; filter: blur(60px); z-index: -1;
+ }
+ body::after {
+ content: ''; position: absolute; bottom: -100px; left: -100px; width: 300px; height: 300px;
+ background: var(--fb-sari); opacity: 0.05; border-radius: 50%; filter: blur(60px); z-index: -1;
+ }
 
-  .options-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    width: 100%;
-    max-width: 900px;
-  }
+ .portal-header {
+ text-align: center;
+ margin-bottom: 50px;
+ }
+ .portal-header h1 {
+ font-family: 'Syne', sans-serif;
+ font-size: clamp(2.5rem, 6vw, 4rem);
+ font-weight: 800;
+ letter-spacing: 2px;
+ color: var(--fb);
+ line-height: 1;
+ }
+ .portal-header h1 span { color: var(--fb-koyu); }
+ .portal-header p {
+ font-family: 'Instrument Serif', serif;
+ font-size: 1.6rem;
+ font-style: italic;
+ color: var(--ink2);
+ margin-top: 15px;
+ opacity: 0.8;
+ }
 
-  .option-card {
-    background: var(--surface);
-    border: 2px solid var(--border);
-    border-radius: 16px;
-    padding: 40px 30px;
-    text-align: center;
-    text-decoration: none;
-    color: inherit;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .option-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 6px;
-    background: var(--fb-sari);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease;
-  }
+ .options-grid {
+ display: grid;
+ grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+ gap: 40px;
+ width: 100%;
+ max-width: 1000px;
+ }
 
-  .option-card:hover {
-    border-color: var(--fb);
-    transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(31, 48, 101, 0.1);
-  }
-  
-  .option-card:hover::before {
-    transform: scaleX(1);
-  }
+ .option-card {
+ background: var(--surface);
+ backdrop-filter: blur(12px);
+ -webkit-backdrop-filter: blur(12px);
+ border: 1px solid var(--border);
+ border-radius: 24px;
+ padding: 50px 35px;
+ text-align: center;
+ text-decoration: none;
+ color: inherit;
+ transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+ position: relative;
+ overflow: hidden;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+ }
+ 
+ .option-card::before {
+ content: '';
+ position: absolute;
+ top: 0; left: 0; width: 100%; height: 6px;
+ background: linear-gradient(90deg, var(--fb), var(--fb-sari));
+ transform: scaleX(0);
+ transform-origin: left;
+ transition: transform 0.5s ease;
+ }
 
-  .icon-wrapper {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: rgba(31, 48, 101, 0.05);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.2rem;
-    margin-bottom: 24px;
-    color: var(--fb);
-    transition: all 0.4s ease;
-  }
+ .option-card:hover {
+ border-color: var(--fb);
+ transform: translateY(-12px);
+ box-shadow: 0 25px 50px rgba(31, 48, 101, 0.12);
+ background: rgba(255, 253, 248, 0.8);
+ }
+ 
+ .option-card:hover::before {
+ transform: scaleX(1);
+ }
 
-  .option-card:hover .icon-wrapper {
-    background: var(--fb);
-    color: var(--fb-sari);
-    transform: scale(1.1) rotate(5deg);
-  }
+ .icon-wrapper {
+ width: 90px;
+ height: 90px;
+ border-radius: 50%;
+ background: rgba(31, 48, 101, 0.05);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 2.5rem;
+ margin-bottom: 28px;
+ color: var(--fb);
+ transition: all 0.5s ease;
+ border: 1px solid rgba(31, 48, 101, 0.1);
+ }
 
-  .option-card h2 {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 12px;
-    color: var(--fb-koyu);
-  }
+ .option-card:hover .icon-wrapper {
+ background: var(--fb);
+ color: var(--fb-sari);
+ transform: scale(1.1) rotate(5deg);
+ box-shadow: 0 10px 20px rgba(31, 48, 101, 0.2);
+ }
 
-  .option-card p {
-    font-size: 0.85rem;
-    color: var(--ink2);
-    line-height: 1.6;
-    margin-bottom: 24px;
-    flex-grow: 1;
-  }
+ .option-card h2 {
+ font-family: 'Syne', sans-serif;
+ font-size: 1.8rem;
+ font-weight: 700;
+ margin-bottom: 15px;
+ color: var(--fb-koyu);
+ }
 
-  .enter-btn {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--fb);
-    border: 1px solid var(--border);
-    padding: 10px 24px;
-    border-radius: 30px;
-    transition: all 0.3s;
-  }
+ .option-card p {
+ font-size: 0.95rem;
+ color: var(--ink2);
+ line-height: 1.7;
+ margin-bottom: 30px;
+ flex-grow: 1;
+ }
 
-  .option-card:hover .enter-btn {
-    background: var(--fb);
-    color: var(--fb-sari);
-    border-color: var(--fb);
-  }
+ .enter-btn {
+ font-family: 'Syne', sans-serif;
+ font-size: 0.8rem;
+ font-weight: 700;
+ letter-spacing: 2px;
+ text-transform: uppercase;
+ color: var(--fb);
+ border: 1px solid var(--border);
+ padding: 12px 30px;
+ border-radius: 40px;
+ transition: all 0.3s;
+ background: white;
+ }
 
-  @media(max-width: 600px) {
-    .options-grid { grid-template-columns: 1fr; }
-    .option-card { padding: 30px 20px; }
-  }
+ .option-card:hover .enter-btn {
+ background: var(--fb);
+ color: var(--fb-sari);
+ border-color: var(--fb);
+ transform: scale(1.05);
+ }
+
+ @media(max-width: 600px) {
+ .options-grid { grid-template-columns: 1fr; }
+ .option-card { padding: 40px 25px; }
+ }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Tarık Donat",
+  "jobTitle": "Yönetici & Endüstriyel Cam Uzmanı",
+  "worksFor": {
+    "@type": "Organization",
+    "name": "Dostcam Cam A.Ş."
+  },
+  "url": "https://www.tarikdonat.com",
+  "sameAs": [
+    "https://www.linkedin.com/",
+    "https://twitter.com/"
+  ]
+}
+</script>
 </head>
 <body>
 
-  <div class="portal-header">
-    <h1>Tarık <span>Donat</span></h1>
-    <p>Lütfen ilerlemek istediğiniz bölümü seçin</p>
-  </div>
+ <div class="portal-header">
+ <h1>Tarık <span>Donat</span></h1>
+ <p>Endüstriyel Cam Çözümleri & Dijital Sistemler</p>
+ </div>
 
-  <div class="options-grid">
-    
-    <a href="vitrin.html" class="option-card">
-      <div class="icon-wrapper">🏗️</div>
-      <h2>Kurumsal Profil</h2>
-      <p>Endüstriyel cam çözümleri, üretim verimliliği sistemleri ve devam eden yayın projelerim.</p>
-      <div class="enter-btn">Profili İncele</div>
-    </a>
+ <div class="options-grid">
+ 
+ <a href="vitrin.html" class="option-card">
+ <div class="icon-wrapper">🏗️</div>
+ <h2>Kurumsal Profil</h2>
+ <p>Endüstriyel cam çözümleri, üretim verimliliği sistemleri ve sektörel teknik yayın projelerim.</p>
+ <div class="enter-btn">Profili İncele</div>
+ </a>
 
-    <a href="news.html" class="option-card">
-      <div class="icon-wrapper">📊</div>
-      <h2>TARIK News</h2>
-      <p>BIST 100, kripto, döviz kurları ve güncel RSS haber akışlarını içeren canlı veri paneli.</p>
-      <div class="enter-btn">Panele Git</div>
-    </a>
+ <a href="news.html" class="option-card">
+ <div class="icon-wrapper">📊</div>
+ <h2>TARIK News</h2>
+ <p>BIST 100, kripto, döviz kurları ve canlı haber akışlarını içeren kişisel veri paneli.</p>
+ <div class="enter-btn">Panele Git</div>
+ </a>
 
-  </div>
+ </div>
 
+ <script>
+ if ('serviceWorker' in navigator) {
+   window.addEventListener('load', () => {
+     navigator.serviceWorker.register('/sw.js');
+   });
+ }
+ </script>
 </body>
 </html>
