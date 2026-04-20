@@ -221,7 +221,12 @@ footer .fn span{color:var(--fb-sari)}
   
   <section class="sec" id="spor">
     <div class="sec-h"><span class="sec-l">Spor</span><span class="sec-t">Günün Gelişmeleri</span></div><div class="ng" id="spN"></div>
-    <div class="cols"><div class="cc"><div class="cc-i">⚽</div><h4>Futbol</h4><p>Süper Lig & Avrupa</p></div><div class="cc"><div class="cc-i">🏀</div><h4>Basketbol</h4><p>NBA & Euroleague</p></div><div class="cc"><div class="cc-i">🏎️</div><h4>Motor Sporları</h4><p>F1 & MotoGP</p></div><div class="cc"><div class="cc-i">🎾</div><h4>Tenis</h4><p>Grand Slam & ATP</p></div></div>
+    <div class="cols">
+      <div class="cc" onclick="window.open('https://www.ntvspor.net/futbol', '_blank')"><div class="cc-i">⚽</div><h4>Futbol</h4><p>Süper Lig & Avrupa</p></div>
+      <div class="cc" onclick="window.open('https://www.ntvspor.net/basketbol', '_blank')"><div class="cc-i">🏀</div><h4>Basketbol</h4><p>NBA & Euroleague</p></div>
+      <div class="cc" onclick="window.open('https://www.ntvspor.net/motor-sporlari', '_blank')"><div class="cc-i">🏎️</div><h4>Motor Sporları</h4><p>F1 & MotoGP</p></div>
+      <div class="cc" onclick="window.open('https://www.ntvspor.net/tenis', '_blank')"><div class="cc-i">🎾</div><h4>Tenis</h4><p>Grand Slam & ATP</p></div>
+    </div>
   </section>
   
   <section class="sec"><div class="sec-h"><span class="sec-l">Özet</span><span class="sec-t">Günün Kronolojisi</span></div><div class="tl" id="tl"></div></section>
@@ -251,7 +256,7 @@ const RSS_FEEDS = {
   world: ['https://www.ntv.com.tr/dunya.rss'],
   economy: ['https://www.ntv.com.tr/ekonomi.rss'],
   tech: ['https://www.ntv.com.tr/teknoloji.rss'],
-  spor: ['https://www.ntv.com.tr/spor.rss']
+  spor: ['https://www.ntvspor.net/rss'] // Spor için özel RSS güncellendi
 };
 
 let allNews = [], finansData = null, cryptoData = null, bistData = null;
@@ -323,12 +328,24 @@ function renderFinans() {
   let h = '';
   mainKeys.forEach(k => {
     if (finansData[k]) {
-      const c = finansData[k], ch = parseFloat(c.Change) || 0, up = ch >= 0, icon = k === 'GAU' ? '🥇' : '💵', label = k === 'GAU' ? 'Gram Altın' : `${k}/TRY`;
+      const c = finansData[k];
+      
+      // Virgülü noktaya çevirip, % işaretini kaldırıyoruz
+      const changeStr = String(c.Change || "0").replace('%', '').replace(',', '.');
+      const ch = parseFloat(changeStr) || 0;
+      const up = ch >= 0; 
+      
+      const icon = k === 'GAU' ? '🥇' : '💵';
+      const label = k === 'GAU' ? 'Gram Altın' : `${k}/TRY`;
+      
       h += `<div class="ir"><span class="lb">${icon} ${label}</span><span class="vl ${up ? 'up' : 'down'}">₺${c.Buying}</span></div>`;
     }
   });
+  
   document.getElementById('fxM').innerHTML = h;
-  if (finansData.CHF) document.getElementById('fxD').innerHTML = `<div class="ir"><span class="lb">CHF/TRY</span><span class="vl up">₺${finansData.CHF.Buying}</span></div>`;
+  if (finansData.CHF) {
+    document.getElementById('fxD').innerHTML = `<div class="ir"><span class="lb">CHF/TRY</span><span class="vl up">₺${finansData.CHF.Buying}</span></div>`;
+  }
   buildTicker();
 }
 
@@ -455,9 +472,17 @@ function fmtDate(d) {
 
 function sc(id, btn) { document.querySelectorAll('.nav-b').forEach(b => b.classList.remove('on')); btn.classList.add('on'); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 
+// GÜNCELLENMİŞ ASENKRON BAŞLATICI (Sonsuz yükleme ekranını engeller)
 async function initAll() {
   try {
-    await Promise.all([fetchBist(), fetchFinans(), fetchCrypto(), fetchAllNews()]);
+    const maxWaitTimer = new Promise(resolve => setTimeout(resolve, 4000));
+    const apiRequests = Promise.allSettled([
+      fetchBist(), 
+      fetchFinans(), 
+      fetchCrypto(), 
+      fetchAllNews()
+    ]);
+    await Promise.race([apiRequests, maxWaitTimer]);
   } catch (e) {
     console.error("Init Error", e);
   } finally {
@@ -467,7 +492,7 @@ async function initAll() {
 
 async function refreshAll() {
   const b = document.getElementById('rb'); b.classList.add('sp');
-  await Promise.all([fetchBist(), fetchFinans(), fetchCrypto(), fetchAllNews()]);
+  await Promise.allSettled([fetchBist(), fetchFinans(), fetchCrypto(), fetchAllNews()]);
   setTimeout(() => b.classList.remove('sp'), 1000);
 }
 
