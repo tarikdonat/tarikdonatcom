@@ -239,12 +239,17 @@ footer .fn span{color:var(--fb-sari)}
 </footer>
 
 <button class="refbtn" id="rb" onclick="refreshAll()" title="Yenile">⟳</button>
+  <script>
+// ==== YEPYENİ VE ZORUNLU GÜNCELLEMELİ SERVİS YAPISI ====
+// Tarayıcının önbelleklemesini engellemek için url'lerin sonuna zaman damgası ekliyoruz
+const TIME_STAMP = new Date().getTime();
 
-<script>
-// ==== GÜNCEL VE GÜVENLİ PROXY SERVİSİ ====
-const CORS_PROXY = 'https://corsproxy.io/?'; 
+// Yeni ve daha stabil proxy servisleri
+const PROXY_1 = 'https://corsproxy.io/?'; 
+const PROXY_2 = 'https://api.allorigins.win/raw?url='; // raw parametresi ile temiz veri
 
-const FINANS_URL = 'https://finans.truncgil.com/v4/today.json';
+// Finans ve Kripto URL'leri
+const FINANS_URL = `https://finans.truncgil.com/v4/today.json?v=${TIME_STAMP}`;
 const FRANKFURTER_URL = 'https://api.frankfurter.app/latest?from=TRY&to=USD,EUR,GBP,CHF,JPY';
 const COINGECKO_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,ripple,cardano,dogecoin,avalanche-2,polkadot&order=market_cap_desc&per_page=8&sparkline=false&price_change_percentage=24h';
 const BIST_URL = 'https://query1.finance.yahoo.com/v8/finance/chart/XU100.IS?interval=1d';
@@ -254,22 +259,27 @@ const RSS_FEEDS = {
   world: ['https://www.ntv.com.tr/dunya.rss'],
   economy: ['https://www.ntv.com.tr/ekonomi.rss'],
   tech: ['https://www.ntv.com.tr/teknoloji.rss'],
-  spor: ['https://www.ntvspor.net/rss']
+  spor: ['https://www.ntvspor.net/rss'] 
 };
 
 let allNews = [], finansData = null, cryptoData = null, bistData = null;
 
 function setLd(m) { document.getElementById('ldMsg').textContent = m; }
 
-// Veri Çekme Fonksiyonu (Proxy Üzerinden Doğrudan)
+// Yedekli Veri Çekme Fonksiyonu (Biri çökerse diğerini dener)
 async function fetchSafe(url, isJson = true) {
   try {
-    const targetUrl = CORS_PROXY + encodeURIComponent(url);
-    const response = await fetch(targetUrl);
+    let response = await fetch(PROXY_1 + encodeURIComponent(url));
+    if (!response.ok) {
+        // İlk proxy hata verirse ikinciye geç
+        console.warn("Proxy 1 başarısız, Proxy 2 deneniyor...", url);
+        response = await fetch(PROXY_2 + encodeURIComponent(url));
+    }
+    
     if (!response.ok) return null;
     return isJson ? await response.json() : await response.text();
   } catch (error) {
-    console.error("Fetch Error:", url, error);
+    console.error("Fetch Hatası:", url, error);
     return null;
   }
 }
@@ -331,8 +341,6 @@ function renderFinans() {
   mainKeys.forEach(k => {
     if (finansData[k]) {
       const c = finansData[k];
-      
-      // Kurlardaki "%" ve "," işaretlerini temizleyip hesaplama yapıyoruz
       const changeStr = String(c.Change || "0").replace('%', '').replace(',', '.');
       const ch = parseFloat(changeStr) || 0;
       const up = ch >= 0; 
@@ -359,8 +367,7 @@ async function fetchCrypto() {
   } else {
     cryptoData = [
       { symbol: 'btc', current_price: 68500, price_change_percentage_24h: 1.5, market_cap: 1300000000000 },
-      { symbol: 'eth', current_price: 3450, price_change_percentage_24h: 2.1, market_cap: 400000000000 },
-      { symbol: 'sol', current_price: 145, price_change_percentage_24h: -1.2, market_cap: 65000000000 }
+      { symbol: 'eth', current_price: 3450, price_change_percentage_24h: 2.1, market_cap: 400000000000 }
     ];
   }
   renderCrypto();
@@ -376,10 +383,10 @@ function renderCrypto() {
   document.getElementById('crB').innerHTML = h;
 }
 
-// ==== YENİ XML AYRIŞTIRICI (CORS UYUMLU) ====
+// ==== KENDİ XML ÇÖZÜCÜMÜZ ====
 async function fetchRSS(url) {
   try {
-    const xmlText = await fetchSafe(url, false); // JSON değil, XML formatında çek
+    const xmlText = await fetchSafe(`${url}?v=${TIME_STAMP}`, false); 
     if (!xmlText) return [];
 
     const parser = new DOMParser();
@@ -387,7 +394,6 @@ async function fetchRSS(url) {
     const items = xmlDoc.querySelectorAll("item");
     
     const parsedNews = [];
-    
     items.forEach(item => {
       const titleNode = item.querySelector("title");
       const title = titleNode ? clean(titleNode.textContent) : "";
@@ -405,10 +411,9 @@ async function fetchRSS(url) {
         parsedNews.push({ title, desc, link, date: pubDate });
       }
     });
-
     return parsedNews;
   } catch (e) {
-    console.error("RSS Parse Hatası:", e);
+    console.error("RSS Hata:", e);
     return [];
   }
 }
@@ -416,20 +421,16 @@ async function fetchRSS(url) {
 function clean(s) { const d = document.createElement('div'); d.innerHTML = s; return d.textContent || d.innerText || ''; }
 
 async function fetchAllNews() {
-  setLd('Haber kaynakları taranıyor...');
+  setLd('Haberler taranıyor...');
   const promises = [];
   for (const [section, feeds] of Object.entries(RSS_FEEDS)) {
-    feeds.forEach(url => { 
-        promises.push(fetchRSS(url).then(n => n.map(x => ({ ...x, section })))); 
-    });
+    feeds.forEach(url => { promises.push(fetchRSS(url).then(n => n.map(x => ({ ...x, section })))); });
   }
   const results = await Promise.all(promises);
   allNews = results.flat().filter(n => n.title.length > 5).sort((a, b) => b.date - a.date);
   
   if (!allNews.length) {
-    allNews = [
-        { title: 'Haberler şu an çekilemedi', desc: 'Lütfen daha sonra tekrar deneyin veya sayfayı yenileyin.', section: 'economy', date: new Date(), link: '#' }
-    ];
+    allNews = [{ title: 'Haberler Yüklenemedi', desc: 'Sistem güncelleniyor.', section: 'economy', date: new Date(), link: '#' }];
   }
   renderNews();
 }
@@ -453,7 +454,6 @@ function renderNews() {
   
   const eN = allNews.filter(n => n.section === 'economy');
   document.getElementById('eN').innerHTML = eN.slice(0, 5).map(n => `<div class="ir" style="cursor:pointer" onclick="window.open('${n.link}','_blank')"><span class="lb" style="font-size:.64rem">${n.title.substring(0, 60)}...</span></div>`).join('');
-  
   renderTimeline();
 }
 
@@ -465,9 +465,7 @@ function renderSec(id, news, sec) {
   elem.innerHTML = news.map(n => `<div class="nc" onclick="window.open('${n.link}','_blank')"><div class="nc-img" style="background:${bgs[sec]};color:${cls[sec]}">📰</div><div class="nc-b"><h3>${n.title}</h3><div class="mt"><span>${fmtDate(n.date)}</span></div></div></div>`).join('');
 }
 
-function renderTimeline() { 
-    document.getElementById('tl').innerHTML = allNews.slice(0, 6).map(n => `<div class="tl-i"><div class="tl-t">${fmtDate(n.date)}</div><h4>${n.title}</h4></div>`).join(''); 
-}
+function renderTimeline() { document.getElementById('tl').innerHTML = allNews.slice(0, 6).map(n => `<div class="tl-i"><div class="tl-t">${fmtDate(n.date)}</div><h4>${n.title}</h4></div>`).join(''); }
 
 function buildTicker() {
   const items = [];
@@ -486,24 +484,14 @@ function buildTicker() {
   document.getElementById('ticker').innerHTML = h + h + h;
 }
 
-function fmtDate(d) { 
-    if (!(d instanceof Date) || isNaN(d)) return 'Bugün'; 
-    return d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }); 
-}
+function fmtDate(d) { return d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }); }
 
 function sc(id, btn) { document.querySelectorAll('.nav-b').forEach(b => b.classList.remove('on')); btn.classList.add('on'); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 
-// ==== GÜVENLİ BAŞLATMA (YÜKLEME EKRANI TAKILMASINI ÖNLER) ====
 async function initAll() {
   try {
-    // Tüm API'ler için maksimum 5 saniye bekleme süresi
-    const maxWaitTimer = new Promise(resolve => setTimeout(resolve, 5000));
-    const apiRequests = Promise.allSettled([
-      fetchBist(), 
-      fetchFinans(), 
-      fetchCrypto(), 
-      fetchAllNews()
-    ]);
+    const maxWaitTimer = new Promise(resolve => setTimeout(resolve, 6000)); // 6 saniye bekle
+    const apiRequests = Promise.allSettled([fetchBist(), fetchFinans(), fetchCrypto(), fetchAllNews()]);
     await Promise.race([apiRequests, maxWaitTimer]);
   } catch (e) {
     console.error("Init Error", e);
@@ -521,5 +509,4 @@ async function refreshAll() {
 setInterval(refreshAll, 300000);
 initAll();
 </script>
-</body>
-</html>
+
