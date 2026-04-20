@@ -143,7 +143,7 @@ footer .fn span{color:var(--fb-sari)}
 <div class="loader" id="loader">
   <div class="shield"><svg viewBox="0 0 56 64" fill="none"><path d="M28 2L52 14V38C52 52 28 62 28 62C28 62 4 52 4 38V14L28 2Z" fill="#1F3065" stroke="#FFED00" stroke-width="2"/><path d="M28 8L46 17V36C46 47 28 56 28 56C28 56 10 47 10 36V17L28 8Z" fill="#0d1a3a"/><text x="28" y="32" text-anchor="middle" fill="#FFED00" font-family="Syne,sans-serif" font-weight="800" font-size="16">TN</text><text x="28" y="44" text-anchor="middle" fill="rgba(255,237,0,0.5)" font-family="Syne,sans-serif" font-weight="600" font-size="6" letter-spacing="2">NEWS</text></svg></div>
   <h2><span>TARIK</span> NEWS</h2>
-  <div class="loader-sub">Canlı veriler çekiliyor...</div>
+  <div class="loader-sub">Veriler eşzamanlanıyor...</div>
   <div class="loader-bar"><div class="fill"></div></div>
   <div class="loader-msg" id="ldMsg">Başlatılıyor...</div>
 </div>
@@ -234,55 +234,34 @@ footer .fn span{color:var(--fb-sari)}
 
 <footer>
   <div class="fl"><div class="fsh"><svg viewBox="0 0 56 64" fill="none"><path d="M28 2L52 14V38C52 52 28 62 28 62C28 62 4 52 4 38V14L28 2Z" fill="#1F3065" stroke="#FFED00" stroke-width="1.5"/><text x="28" y="34" text-anchor="middle" fill="#FFED00" font-family="Syne,sans-serif" font-weight="800" font-size="14">TN</text><text x="28" y="44" text-anchor="middle" fill="rgba(255,237,0,0.4)" font-family="Syne,sans-serif" font-weight="600" font-size="5" letter-spacing="1.5">NEWS</text></svg></div><div class="fn"><span>TARIK</span> NEWS</div></div>
-  <p>Veriler: NTV RSS, CoinGecko, Yahoo Finance</p>
+  <p>Veriler: NTV RSS, CoinGecko, Yahoo Finance, Exchangerate-API</p>
   <p style="margin-top:2px;color:var(--ink4)">Son güncelleme: <span id="lu"></span></p>
 </footer>
 
 <button class="refbtn" id="rb" onclick="refreshAll()" title="Yenile">⟳</button>
-  <script>
-// ==== YEPYENİ VE ZORUNLU GÜNCELLEMELİ SERVİS YAPISI ====
-// Tarayıcının önbelleklemesini engellemek için url'lerin sonuna zaman damgası ekliyoruz
-const TIME_STAMP = new Date().getTime();
 
-// Yeni ve daha stabil proxy servisleri
-const PROXY_1 = 'https://corsproxy.io/?'; 
-const PROXY_2 = 'https://api.allorigins.win/raw?url='; // raw parametresi ile temiz veri
+<script>
+// ==== YEPYENİ PROXY VE DOĞRUDAN (NATIVE) API YAPISI ====
+const CORS_PROXY = 'https://corsproxy.io/?'; 
 
-// Finans ve Kripto URL'leri
-const FINANS_URL = `https://finans.truncgil.com/v4/today.json?v=${TIME_STAMP}`;
-const FRANKFURTER_URL = 'https://api.frankfurter.app/latest?from=TRY&to=USD,EUR,GBP,CHF,JPY';
-const COINGECKO_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,ripple,cardano,dogecoin,avalanche-2,polkadot&order=market_cap_desc&per_page=8&sparkline=false&price_change_percentage=24h';
+// Önbellek sorunlarını atlatmak için zaman damgası
+const TS = new Date().getTime();
+
+// Borsa ve Kripto URL'leri
 const BIST_URL = 'https://query1.finance.yahoo.com/v8/finance/chart/XU100.IS?interval=1d';
+const COINGECKO_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,ripple,cardano,dogecoin,avalanche-2,polkadot&order=market_cap_desc&per_page=8&sparkline=false&price_change_percentage=24h';
 
 const RSS_FEEDS = {
   turkey: ['https://www.ntv.com.tr/turkiye.rss', 'https://www.ntv.com.tr/gundem.rss'],
   world: ['https://www.ntv.com.tr/dunya.rss'],
   economy: ['https://www.ntv.com.tr/ekonomi.rss'],
   tech: ['https://www.ntv.com.tr/teknoloji.rss'],
-  spor: ['https://www.ntvspor.net/rss'] 
+  spor: ['https://www.ntvspor.net/rss']
 };
 
 let allNews = [], finansData = null, cryptoData = null, bistData = null;
 
 function setLd(m) { document.getElementById('ldMsg').textContent = m; }
-
-// Yedekli Veri Çekme Fonksiyonu (Biri çökerse diğerini dener)
-async function fetchSafe(url, isJson = true) {
-  try {
-    let response = await fetch(PROXY_1 + encodeURIComponent(url));
-    if (!response.ok) {
-        // İlk proxy hata verirse ikinciye geç
-        console.warn("Proxy 1 başarısız, Proxy 2 deneniyor...", url);
-        response = await fetch(PROXY_2 + encodeURIComponent(url));
-    }
-    
-    if (!response.ok) return null;
-    return isJson ? await response.json() : await response.text();
-  } catch (error) {
-    console.error("Fetch Hatası:", url, error);
-    return null;
-  }
-}
 
 function updateClock() {
   const n = new Date();
@@ -292,18 +271,25 @@ function updateClock() {
 }
 updateClock(); setInterval(updateClock, 60000);
 
+// --- BİST 100 (Proxy Kullanır) ---
 async function fetchBist() {
   setLd('Borsa verileri alınıyor...');
-  const data = await fetchSafe(BIST_URL, true);
-  if (data && data.chart && data.chart.result && data.chart.result[0]) {
-    const result = data.chart.result[0];
-    const currentPrice = result.meta.regularMarketPrice;
-    const previousClose = result.meta.previousClose;
-    const changePercent = ((currentPrice - previousClose) / previousClose) * 100;
-    bistData = { price: currentPrice.toFixed(2), change: changePercent.toFixed(2), up: changePercent >= 0 };
-  } else {
-    bistData = { price: '10.250,50', change: '+1.15', up: true };
-  }
+  try {
+    const res = await fetch(CORS_PROXY + encodeURIComponent(BIST_URL + '&v=' + TS));
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.chart && data.chart.result && data.chart.result[0]) {
+        const result = data.chart.result[0];
+        const currentPrice = result.meta.regularMarketPrice;
+        const previousClose = result.meta.previousClose;
+        const changePercent = ((currentPrice - previousClose) / previousClose) * 100;
+        bistData = { price: currentPrice.toFixed(2), change: changePercent.toFixed(2), up: changePercent >= 0 };
+        renderBist();
+        return;
+      }
+    }
+  } catch(e) { console.error("Borsa hatası", e); }
+  bistData = { price: 'Veri Yok', change: '0', up: true };
   renderBist();
 }
 
@@ -312,26 +298,52 @@ function renderBist() {
   document.getElementById('bistM').innerHTML = `<div class="ir"><span class="lb">📊 BIST 100</span><span class="vl ${bistData.up ? 'up' : 'down'}">${bistData.price} Puan (${bistData.up ? '+' : ''}${bistData.change}%)</span></div>`;
 }
 
+// --- DÖVİZ KURLARI (Proxy GEREKTİRMEZ - Doğrudan çalışır) ---
 async function fetchFinans() {
   setLd('Döviz kurları alınıyor...');
-  let data = await fetchSafe(FINANS_URL, true);
-  
-  if (data && data.USD) {
-    finansData = data;
-  } else {
-    const fData = await fetchSafe(FRANKFURTER_URL, true);
-    if (fData && fData.rates) {
-      finansData = {};
-      const rate = fData.rates;
-      if (rate.USD) finansData.USD = { Buying: (1/rate.USD).toFixed(4), Change: '0' };
-      if (rate.EUR) finansData.EUR = { Buying: (1/rate.EUR).toFixed(4), Change: '0' };
-      if (rate.GBP) finansData.GBP = { Buying: (1/rate.GBP).toFixed(4), Change: '0' };
-      finansData.GAU = { Buying: '3,250.00', Change: '+0.5' }; 
+  try {
+    // 1. Kurlar için PROXY GEREKTİRMEYEN, %100 güvenilir global API
+    const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+    
+    if (res.ok) {
+        const data = await res.json();
+        if (data && data.rates && data.rates.TRY) {
+          const tryRate = data.rates.TRY; // 1 USD kaç TL
+          const eurRate = tryRate / data.rates.EUR; // 1 EUR kaç TL
+          const gbpRate = tryRate / data.rates.GBP; // 1 GBP kaç TL
+          const chfRate = tryRate / data.rates.CHF; // 1 CHF kaç TL
+          
+          let goldPrice = 'Veri Yok';
+          let goldChange = '0';
+          
+          // 2. Altın verisi için yerel kaynağı deneyelim
+          try {
+             const goldRes = await fetch(CORS_PROXY + encodeURIComponent('https://finans.truncgil.com/v4/today.json?v=' + TS));
+             if(goldRes.ok) {
+                 const goldData = await goldRes.json();
+                 if(goldData && goldData.GAU) {
+                     goldPrice = goldData.GAU.Buying;
+                     goldChange = goldData.GAU.Change;
+                 }
+             }
+          } catch(e) { console.warn("Altın verisi alınamadı"); }
+
+          finansData = {
+            USD: { Buying: tryRate.toFixed(4), Change: '0' },
+            EUR: { Buying: eurRate.toFixed(4), Change: '0' },
+            GBP: { Buying: gbpRate.toFixed(4), Change: '0' },
+            CHF: { Buying: chfRate.toFixed(4), Change: '0' },
+            GAU: { Buying: goldPrice, Change: goldChange }
+          };
+        }
     }
+  } catch (err) { console.error("Finans API hatası", err); }
+  
+  if (!finansData) {
+      // API tamamen çökerse eski (yanlış) rakamlar görünmesin
+      finansData = { USD: { Buying: 'Hata', Change: '0' }, EUR: { Buying: 'Hata', Change: '0' }, GBP: { Buying: 'Hata', Change: '0' }, GAU: { Buying: 'Hata', Change: '0' }, CHF: { Buying: 'Hata', Change: '0' } };
   }
-  if (!finansData || !finansData.USD) {
-    finansData = { USD: { Buying: '32.45', Change: '+0.12' }, EUR: { Buying: '34.85', Change: '-0.08' }, GBP: { Buying: '40.10', Change: '+0.15' }, GAU: { Buying: '3,140', Change: '+0.35' }, CHF: { Buying: '35.85', Change: '+0.05' } };
-  }
+  
   renderFinans();
 }
 
@@ -341,6 +353,7 @@ function renderFinans() {
   mainKeys.forEach(k => {
     if (finansData[k]) {
       const c = finansData[k];
+      
       const changeStr = String(c.Change || "0").replace('%', '').replace(',', '.');
       const ch = parseFloat(changeStr) || 0;
       const up = ch >= 0; 
@@ -359,16 +372,18 @@ function renderFinans() {
   buildTicker();
 }
 
+// --- KRİPTO (Proxy GEREKTİRMEZ - Doğrudan çalışır) ---
 async function fetchCrypto() {
   setLd('Kripto verileri alınıyor...');
-  const data = await fetchSafe(COINGECKO_URL, true);
-  if (data && Array.isArray(data) && data.length > 0) {
-    cryptoData = data;
-  } else {
-    cryptoData = [
-      { symbol: 'btc', current_price: 68500, price_change_percentage_24h: 1.5, market_cap: 1300000000000 },
-      { symbol: 'eth', current_price: 3450, price_change_percentage_24h: 2.1, market_cap: 400000000000 }
-    ];
+  try {
+    const response = await fetch(COINGECKO_URL);
+    if (response.ok) {
+        cryptoData = await response.json();
+    }
+  } catch(e) { console.error("Kripto hatası", e); }
+  
+  if (!cryptoData || cryptoData.length === 0) {
+      cryptoData = [{ symbol: 'Veri Yok', current_price: 0, price_change_percentage_24h: 0, market_cap: 0 }];
   }
   renderCrypto();
 }
@@ -383,11 +398,12 @@ function renderCrypto() {
   document.getElementById('crB').innerHTML = h;
 }
 
-// ==== KENDİ XML ÇÖZÜCÜMÜZ ====
+// --- RSS HABERLERİ (CORS Proxy Üzerinden XML Ayrıştırıcı) ---
 async function fetchRSS(url) {
   try {
-    const xmlText = await fetchSafe(`${url}?v=${TIME_STAMP}`, false); 
-    if (!xmlText) return [];
+    const response = await fetch(CORS_PROXY + encodeURIComponent(url + '?v=' + TS)); 
+    if (!response.ok) return [];
+    const xmlText = await response.text();
 
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xmlText, "text/xml");
@@ -411,6 +427,7 @@ async function fetchRSS(url) {
         parsedNews.push({ title, desc, link, date: pubDate });
       }
     });
+
     return parsedNews;
   } catch (e) {
     console.error("RSS Hata:", e);
@@ -430,7 +447,7 @@ async function fetchAllNews() {
   allNews = results.flat().filter(n => n.title.length > 5).sort((a, b) => b.date - a.date);
   
   if (!allNews.length) {
-    allNews = [{ title: 'Haberler Yüklenemedi', desc: 'Sistem güncelleniyor.', section: 'economy', date: new Date(), link: '#' }];
+    allNews = [{ title: 'Haberler şu an çekilemedi', desc: 'Daha sonra tekrar deneyin.', section: 'economy', date: new Date(), link: '#' }];
   }
   renderNews();
 }
@@ -454,6 +471,7 @@ function renderNews() {
   
   const eN = allNews.filter(n => n.section === 'economy');
   document.getElementById('eN').innerHTML = eN.slice(0, 5).map(n => `<div class="ir" style="cursor:pointer" onclick="window.open('${n.link}','_blank')"><span class="lb" style="font-size:.64rem">${n.title.substring(0, 60)}...</span></div>`).join('');
+  
   renderTimeline();
 }
 
@@ -469,17 +487,17 @@ function renderTimeline() { document.getElementById('tl').innerHTML = allNews.sl
 
 function buildTicker() {
   const items = [];
-  if (bistData) items.push({ text: 'BIST 100', val: bistData.price, change: (bistData.up ? '+' : '') + bistData.change + '%', up: bistData.up });
-  if (finansData && finansData.USD) {
+  if (bistData && bistData.price !== 'Veri Yok') items.push({ text: 'BIST 100', val: bistData.price, change: (bistData.up ? '+' : '') + bistData.change + '%', up: bistData.up });
+  if (finansData && finansData.USD && finansData.USD.Buying !== 'Hata') {
       items.push({ text: 'USD/TRY', val: '₺' + finansData.USD.Buying, change: '', up: true });
       items.push({ text: 'EUR/TRY', val: '₺' + finansData.EUR.Buying, change: '', up: true });
   }
-  if (cryptoData && cryptoData.length > 0) {
+  if (cryptoData && cryptoData.length > 0 && cryptoData[0].symbol !== 'Veri Yok') {
       const btc = cryptoData.find(c => c.symbol === 'btc');
       if (btc) items.push({ text: 'BTC', val: '$' + btc.current_price, change: (btc.price_change_percentage_24h > 0 ? '+' : '') + btc.price_change_percentage_24h.toFixed(2) + '%', up: btc.price_change_percentage_24h > 0 });
   }
   
-  if (!items.length) items.push({ text: 'Veriler güncelleniyor...', val: '', change: '', up: true });
+  if (!items.length) items.push({ text: 'Veriler Bekleniyor...', val: '', change: '', up: true });
   const h = items.map(i => `<span>${i.text}: <strong>${i.val}</strong> ${i.change ? `<span class="${i.up ? 'up' : 'down'}">${i.change}</span>` : ''} <span class="sep">│</span></span>`).join('');
   document.getElementById('ticker').innerHTML = h + h + h;
 }
@@ -488,16 +506,14 @@ function fmtDate(d) { return d.toLocaleTimeString('tr-TR', { hour: '2-digit', mi
 
 function sc(id, btn) { document.querySelectorAll('.nav-b').forEach(b => b.classList.remove('on')); btn.classList.add('on'); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 
+// GÜVENLİ BAŞLATMA ZAMANLAYICISI
 async function initAll() {
   try {
-    const maxWaitTimer = new Promise(resolve => setTimeout(resolve, 6000)); // 6 saniye bekle
+    const maxWaitTimer = new Promise(resolve => setTimeout(resolve, 5000));
     const apiRequests = Promise.allSettled([fetchBist(), fetchFinans(), fetchCrypto(), fetchAllNews()]);
     await Promise.race([apiRequests, maxWaitTimer]);
-  } catch (e) {
-    console.error("Init Error", e);
-  } finally {
-    document.getElementById('loader').classList.add('done');
-  }
+  } catch (e) { console.error("Init Error", e); } 
+  finally { document.getElementById('loader').classList.add('done'); }
 }
 
 async function refreshAll() {
@@ -509,4 +525,5 @@ async function refreshAll() {
 setInterval(refreshAll, 300000);
 initAll();
 </script>
-
+</body>
+</html>
