@@ -14,23 +14,85 @@
  --bg:#f5f0e8; --surface: rgba(255, 253, 248, 0.7); 
  --ink:#1a1612; --ink2:#4a4035; --ink3:#8a7e70;
  --border: rgba(216, 208, 194, 0.6);
+ --shadow: rgba(0, 0, 0, 0.02);
+ --shadow-hover: rgba(31, 48, 101, 0.1);
+ --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
  }
+ 
+ body.dark {
+ --bg: #0d121f;
+ --surface: rgba(18, 26, 47, 0.7);
+ --ink: #f5f0e8;
+ --ink2: #b5aa98;
+ --ink3: #8a7e70;
+ --border: rgba(255, 255, 255, 0.08);
+ --shadow: rgba(0, 0, 0, 0.2);
+ --shadow-hover: rgba(255, 237, 0, 0.05);
+ }
+
  body {
  font-family: 'DM Mono', monospace;
- background: #f5f0e8;
+ background: var(--bg);
  color: var(--ink);
  line-height: 1.7;
+ transition: background 0.5s ease, color 0.5s ease;
  }
  ::-webkit-scrollbar { width: 6px; }
  ::-webkit-scrollbar-thumb { background: var(--fb); }
 
  .container { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
  
+ .interactive-glow {
+ position: fixed;
+ width: 450px;
+ height: 450px;
+ background: radial-gradient(circle, rgba(31, 48, 101, 0.03) 0%, transparent 70%);
+ pointer-events: none;
+ transform: translate(-50%, -50%);
+ z-index: -1;
+ border-radius: 50%;
+ }
+ body.dark .interactive-glow {
+ background: radial-gradient(circle, rgba(255, 237, 0, 0.02) 0%, transparent 70%);
+ }
+
+ .theme-toggle {
+ position: fixed;
+ top: 20px;
+ right: 20px;
+ background: var(--surface);
+ border: 1px solid var(--border);
+ color: var(--ink);
+ width: 44px;
+ height: 44px;
+ border-radius: 50%;
+ cursor: pointer;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 1.2rem;
+ transition: var(--transition);
+ z-index: 1000;
+ backdrop-filter: blur(8px);
+ -webkit-backdrop-filter: blur(8px);
+ box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+ }
+ .theme-toggle:hover {
+ transform: scale(1.1) rotate(15deg);
+ border-color: var(--fb);
+ }
+ body.dark .theme-toggle:hover {
+ border-color: var(--fb-sari);
+ }
+
  header {
  padding: 80px 0;
  border-bottom: 3px double var(--ink);
  text-align: center;
  position: relative;
+ }
+ body.dark header {
+ border-bottom-color: var(--border);
  }
  .title-tag {
  font-family: 'Syne', sans-serif;
@@ -44,7 +106,10 @@
  padding: 6px 16px;
  border: 1px solid var(--border);
  border-radius: 30px;
- background: white;
+ background: var(--surface);
+ }
+ body.dark .title-tag {
+ color: var(--fb-sari);
  }
  h1 {
  font-family: 'Syne', sans-serif;
@@ -54,7 +119,11 @@
  color: var(--fb-koyu);
  line-height: 1.1;
  }
+ body.dark h1 {
+ color: #f5f0e8;
+ }
  h1 span { color: var(--fb-sari); text-shadow: 2px 2px 0 var(--fb); }
+ body.dark h1 span { text-shadow: 2px 2px 0 #000; }
  .subtitle {
  font-family: 'Instrument Serif', serif;
  font-size: 1.8rem;
@@ -65,7 +134,7 @@
 
  .section { padding: 80px 0; border-bottom: 1px solid var(--border); }
  .section:last-child { border-bottom: none; }
- 
+  
  .sec-title {
  font-family: 'Syne', sans-serif;
  font-size: 1.1rem;
@@ -77,6 +146,9 @@
  display: flex;
  align-items: center;
  gap: 15px;
+ }
+ body.dark .sec-title {
+ color: var(--fb-sari);
  }
  .sec-title::after {
  content: '';
@@ -93,7 +165,8 @@
  }
  .about-text p { margin-bottom: 20px; font-size: 1rem; }
  .about-text strong { color: var(--fb); font-weight: 600; }
- 
+ body.dark .about-text strong { color: var(--fb-sari); }
+  
  .expertise-tags {
  display: flex;
  flex-wrap: wrap;
@@ -110,11 +183,18 @@
  font-family: 'Syne', sans-serif;
  color: var(--ink2);
  transition: all 0.3s;
+ cursor: pointer;
  }
  .tag:hover {
  border-color: var(--fb);
  background: var(--fb);
  color: var(--fb-sari);
+ transform: translateY(-2px);
+ }
+ body.dark .tag:hover {
+ border-color: var(--fb-sari);
+ background: var(--fb-sari);
+ color: var(--fb-koyu);
  }
 
  .projects-grid {
@@ -128,16 +208,20 @@
  border: 1px solid var(--border);
  border-radius: 16px;
  padding: 35px;
- transition: all 0.4s ease;
+ transition: var(--transition);
  position: relative;
  overflow: hidden;
- box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+ box-shadow: 0 5px 15px var(--shadow);
  }
  .card:hover {
  border-color: var(--fb);
  transform: translateY(-8px);
- box-shadow: 0 20px 40px rgba(31, 48, 101, 0.1);
+ box-shadow: 0 20px 40px var(--shadow-hover);
  background: rgba(255, 253, 248, 0.9);
+ }
+ body.dark .card:hover {
+ border-color: var(--fb-sari);
+ background: rgba(18, 26, 47, 0.9);
  }
  .card::before {
  content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: var(--fb-sari);
@@ -159,8 +243,11 @@
  margin-bottom: 15px;
  line-height: 1.2;
  }
+ body.dark .card h3 {
+ color: var(--fb-sari);
+ }
  .card p { font-size: 0.9rem; color: var(--ink2); margin-bottom: 25px; line-height: 1.6; }
- 
+  
  .btn {
  display: inline-flex;
  align-items: center;
@@ -172,17 +259,274 @@
  padding: 12px 24px;
  border-radius: 8px;
  transition: all 0.3s;
+ cursor: pointer;
+ border: none;
  }
  .btn-primary {
  background: var(--fb);
  color: var(--fb-sari);
  }
  .btn-primary:hover { background: var(--fb-koyu); transform: scale(1.03); }
+ body.dark .btn-primary {
+ background: var(--fb-sari);
+ color: var(--fb-koyu);
+ }
+ body.dark .btn-primary:hover {
+ background: #e6d400;
+ }
  .btn-outline {
  border: 1px solid var(--fb);
  color: var(--fb);
+ background: none;
  }
  .btn-outline:hover { background: var(--fb); color: var(--fb-sari); transform: scale(1.03); }
+ body.dark .btn-outline {
+ border-color: var(--fb-sari);
+ color: var(--fb-sari);
+ }
+ body.dark .btn-outline:hover {
+ background: var(--fb-sari);
+ color: var(--fb-koyu);
+ }
+
+ /* Cam Hesaplayıcı CSS */
+ .calculator-grid {
+ display: grid;
+ grid-template-columns: 1.1fr 0.9fr;
+ gap: 30px;
+ background: var(--surface);
+ backdrop-filter: blur(10px);
+ border: 1px solid var(--border);
+ border-radius: 20px;
+ padding: 30px;
+ box-shadow: 0 10px 30px var(--shadow);
+ }
+ body.dark .calculator-grid {
+ background: rgba(18, 26, 47, 0.5);
+ }
+ .form-group {
+ margin-bottom: 20px;
+ }
+ .form-row {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 15px;
+ }
+ .form-group label {
+ display: block;
+ font-size: 0.75rem;
+ font-family: 'Syne', sans-serif;
+ font-weight: 700;
+ margin-bottom: 8px;
+ text-transform: uppercase;
+ color: var(--fb);
+ }
+ body.dark .form-group label {
+ color: var(--fb-sari);
+ }
+ .calc-input {
+ width: 100%;
+ padding: 12px 16px;
+ border: 1px solid var(--border);
+ background: white;
+ color: var(--ink);
+ border-radius: 10px;
+ font-family: 'DM Mono', monospace;
+ font-size: 0.9rem;
+ transition: all 0.3s;
+ }
+ body.dark .calc-input {
+ background: #0d121f;
+ border-color: var(--border);
+ color: #f5f0e8;
+ }
+ .calc-input:focus {
+ outline: none;
+ border-color: var(--fb);
+ box-shadow: 0 0 0 3px rgba(31, 48, 101, 0.1);
+ }
+ body.dark .calc-input:focus {
+ border-color: var(--fb-sari);
+ box-shadow: 0 0 0 3px rgba(255, 237, 0, 0.1);
+ }
+ .calc-results {
+ display: flex;
+ flex-direction: column;
+ justify-content: space-between;
+ background: rgba(255, 255, 255, 0.4);
+ border: 1px solid var(--border);
+ border-radius: 12px;
+ padding: 24px;
+ }
+ body.dark .calc-results {
+ background: rgba(13, 18, 31, 0.4);
+ }
+ .result-box {
+ border-bottom: 1px solid var(--border);
+ padding-bottom: 12px;
+ margin-bottom: 12px;
+ }
+ .result-box:last-child {
+ border-bottom: none;
+ }
+ .result-label {
+ display: block;
+ font-size: 0.7rem;
+ font-family: 'Syne', sans-serif;
+ font-weight: 600;
+ text-transform: uppercase;
+ color: var(--ink3);
+ margin-bottom: 4px;
+ }
+ .result-value {
+ font-family: 'Syne', sans-serif;
+ font-size: 1.6rem;
+ font-weight: 800;
+ color: var(--fb);
+ }
+ body.dark .result-value {
+ color: var(--fb-sari);
+ }
+ .result-note {
+ font-size: 0.65rem;
+ line-height: 1.4;
+ color: var(--ink3);
+ margin-top: 15px;
+ }
+
+ /* Modallar CSS */
+ .modal {
+ position: fixed;
+ inset: 0;
+ background: rgba(13, 26, 58, 0.4);
+ backdrop-filter: blur(8px);
+ display: none;
+ align-items: center;
+ justify-content: center;
+ z-index: 10000;
+ padding: 20px;
+ opacity: 0;
+ transition: opacity 0.3s ease;
+ }
+ .modal.open {
+ opacity: 1;
+ }
+ .modal-content {
+ background: var(--bg);
+ border: 1px solid var(--border);
+ border-radius: 20px;
+ width: 100%;
+ max-width: 500px;
+ padding: 35px;
+ position: relative;
+ box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+ transform: scale(0.9);
+ transition: transform 0.3s ease;
+ }
+ .modal.open .modal-content {
+ transform: scale(1);
+ }
+ .close-btn {
+ position: absolute;
+ top: 15px;
+ right: 20px;
+ font-size: 1.8rem;
+ cursor: pointer;
+ color: var(--ink3);
+ transition: color 0.3s;
+ }
+ .close-btn:hover {
+ color: var(--fb);
+ }
+ body.dark .close-btn:hover {
+ color: var(--fb-sari);
+ }
+ .modal h3 {
+ font-family: 'Syne', sans-serif;
+ font-size: 1.5rem;
+ color: var(--fb);
+ margin-bottom: 15px;
+ }
+ body.dark .modal h3 {
+ color: var(--fb-sari);
+ }
+ .modal p {
+ font-size: 0.95rem;
+ line-height: 1.6;
+ color: var(--ink2);
+ }
+ .modal ul {
+ margin-top: 15px;
+ margin-left: 20px;
+ font-size: 0.9rem;
+ color: var(--ink2);
+ }
+ .modal li {
+ margin-bottom: 8px;
+ }
+
+ /* Animasyonlu Cam Grafik Tasarımı */
+ .glass-artwork-container {
+ width: 100%;
+ height: 320px;
+ background: var(--surface);
+ backdrop-filter: blur(10px);
+ border: 1px solid var(--border);
+ border-radius: 20px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ box-shadow: 0 10px 30px var(--shadow);
+ overflow: hidden;
+ transition: var(--transition);
+ position: relative;
+ }
+ .glass-artwork-container:hover {
+ border-color: var(--fb);
+ transform: translateY(-4px);
+ }
+ body.dark .glass-artwork-container:hover {
+ border-color: var(--fb-sari);
+ }
+ .glass-artwork {
+ transition: transform 0.5s ease;
+ }
+ .glass-artwork-container:hover .glass-artwork {
+ transform: scale(1.03);
+ }
+
+ .notify-form-container {
+ margin-top: 15px;
+ }
+ .notify-msg-success {
+ animation: fadeIn 0.4s ease forwards;
+ }
+ @keyframes fadeIn {
+ from { opacity: 0; transform: translateY(5px); }
+ to { opacity: 1; transform: translateY(0); }
+ }
+ 
+ .click-particle {
+ position: fixed;
+ width: 12px;
+ height: 12px;
+ border: 2px solid var(--fb);
+ border-radius: 50%;
+ pointer-events: none;
+ transform: translate(-50%, -50%) scale(0.5);
+ opacity: 0.8;
+ z-index: 9999;
+ animation: particleExplode 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+ }
+ body.dark .click-particle {
+ border-color: var(--fb-sari);
+ }
+ @keyframes particleExplode {
+ to {
+   transform: translate(-50%, -50%) scale(4.5);
+   opacity: 0;
+ }
+ }
 
  footer {
  padding: 60px 0;
@@ -202,91 +546,408 @@
 
  @media(max-width: 768px) {
  .about-grid { grid-template-columns: 1fr; }
+ .calculator-grid { grid-template-columns: 1fr; }
  }
 </style>
-</head>
 <body>
+  <div class="interactive-glow" id="glow"></div>
+  
+  <button class="theme-toggle" id="themeToggle" aria-label="Tema Değiştir">🌙</button>
 
-<header>
- <div class="container">
- <div class="title-tag">Portfolyo & Vitrin</div>
- <h1>Tarık <span>Donat</span></h1>
- <div class="subtitle">Endüstriyel Cam Çözümleri & Dijital Sistemler</div>
- </div>
-</header>
+  <header>
+    <div class="container">
+      <div class="title-tag">Portfolyo & Vitrin</div>
+      <h1>Tarık <span>Donat</span></h1>
+      <div class="subtitle">Endüstriyel Cam Çözümleri & Dijital Sistemler</div>
+    </div>
+  </header>
 
-<main class="container">
- 
- <section class="section">
- <div class="sec-title">Hakkımda & Uzmanlık</div>
- <div class="about-grid">
- <div class="about-text">
- <p>Merhaba, ben Tarık Donat. <strong>Dostcam Cam A.Ş.</strong> bünyesinde Yönetici ve Satış/Pazarlama Uzmanı olarak görev yapıyorum.</p>
- <p>Mimari projelerden ziyade, tamamen <strong>endüstriyel sektörlerin</strong> ihtiyaçlarına yönelik nitelikli cam üretim süreçleri ve bu süreçlerin küresel pazarda konumlandırılması üzerine odaklanıyorum.</p>
- <p>Aynı zamanda şirket içi operasyonları hızlandırmak amacıyla web tabanlı veri görselleştirme, sipariş takip dashboard'ları ve otomasyon sistemleri geliştiriyorum.</p>
- <div class="expertise-tags">
- <span class="tag">Duşakabin Camları</span>
- <span class="tag">Aydınlatma Camları</span>
- <span class="tag">Mobilya Camları</span>
- <span class="tag">Elektrik Panosu Camları</span>
- </div>
- </div>
- <div>
- <div style="width:100%; height:320px; background:var(--surface); backdrop-filter:blur(10px); border:1px solid var(--border); border-radius:20px; display:flex; align-items:center; justify-content:center; color:var(--ink3); font-family:'Syne',sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
- [Profil Fotoğrafı Alanı]
- </div>
- </div>
- </div>
- </section>
+  <main class="container">
+    
+    <section class="section">
+      <div class="sec-title">Hakkımda & Uzmanlık</div>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>Merhaba, ben Tarık Donat. <strong>Dostcam Cam A.Ş.</strong> bünyesinde Yönetici ve Teknoloji & Finans Sistemleri Yöneticisi olarak görev yapıyorum.</p>
+          <p>Mimari projelerden ziyade, tamamen <strong>endüstriyel sektörlerin</strong> ihtiyaçlarına yönelik nitelikli cam üretim süreçleri ve bu süreçlerin küresel pazarda konumlandırılması üzerine odaklanıyorum.</p>
+          <p>Aynı zamanda şirket içi operasyonları hızlandırmak amacıyla web tabanlı veri görselleştirme, sipariş takip dashboard'ları ve otomasyon sistemleri geliştiriyorum.</p>
+          <div class="expertise-tags">
+            <span class="tag" onclick="openExpertModal('dusakabin')">Duşakabin Camları</span>
+            <span class="tag" onclick="openExpertModal('aydinlatma')">Aydınlatma Camları</span>
+            <span class="tag" onclick="openExpertModal('mobilya')">Mobilya Camları</span>
+            <span class="tag" onclick="openExpertModal('pano')">Elektrik Panosu Camları</span>
+          </div>
+        </div>
+        <div>
+          <div class="glass-artwork-container">
+            <svg viewBox="0 0 400 320" width="100%" height="100%" class="glass-artwork">
+              <defs>
+                <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="rgba(255,255,255,0.4)" />
+                  <stop offset="30%" stop-color="rgba(31,48,101,0.1)" />
+                  <stop offset="70%" stop-color="rgba(255,237,0,0.15)" />
+                  <stop offset="100%" stop-color="rgba(255,255,255,0.05)" />
+                </linearGradient>
+                <linearGradient id="beamGrad" x1="0%" y1="50%" x2="100%" y2="50%">
+                  <stop offset="0%" stop-color="#FFED00" stop-opacity="0" />
+                  <stop offset="50%" stop-color="#FFED00" stop-opacity="0.8" />
+                  <stop offset="100%" stop-color="#1F3065" stop-opacity="0.9" />
+                </linearGradient>
+                <filter id="glowFilter">
+                  <feGaussianBlur stdDeviation="4" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+              <g stroke="var(--border)" stroke-width="0.5" opacity="0.3">
+                <line x1="50" y1="0" x2="50" y2="320" />
+                <line x1="150" y1="0" x2="150" y2="320" />
+                <line x1="250" y1="0" x2="250" y2="320" />
+                <line x1="350" y1="0" x2="350" y2="320" />
+                <line x1="0" y1="80" x2="400" y2="80" />
+                <line x1="0" y1="160" x2="400" y2="160" />
+                <line x1="0" y1="240" x2="400" y2="240" />
+              </g>
+              <path d="M 0 100 L 160 160 L 400 220" stroke="url(#beamGrad)" stroke-width="3" fill="none" filter="url(#glowFilter)">
+                <animate attributeName="stroke-dasharray" values="0,1000;1000,0;0,1000" dur="4s" repeatCount="indefinite" />
+              </path>
+              <path d="M 160 160 L 400 130" stroke="#FFED00" stroke-width="1.5" opacity="0.6" stroke-dasharray="4,4" fill="none" />
+              <polygon points="120,220 200,80 280,220" fill="url(#glassGrad)" stroke="var(--fb)" stroke-width="2" style="backdrop-filter: blur(5px);" />
+              <line x1="120" y1="220" x2="280" y2="220" stroke="var(--fb-sari)" stroke-width="3" />
+              <circle cx="160" cy="160" r="6" fill="#FFED00" filter="url(#glowFilter)">
+                <animate attributeName="r" values="4;8;4" dur="2s" repeatCount="indefinite" />
+              </circle>
+              <polygon points="190,97 210,97 270,205 250,205" fill="rgba(255,255,255,0.15)" opacity="0">
+                <animate attributeName="opacity" values="0;0.7;0" dur="3s" repeatCount="indefinite" />
+              </polygon>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
 
- <section class="section">
- <div class="sec-title">Güncel Projeler & Sistemler</div>
- <div class="projects-grid">
- 
- <div class="card">
- <div class="card-type">Yayın / E-Kitap</div>
- <h3>Endüstriyel Cam Üretimi: Teknik Rehber</h3>
- <p>Üretim hattı verimliliği, yangın analizleri ve global kalite standartları üzerine hazırlamakta olduğum kapsamlı sektörel e-kitap projesi.</p>
- <span class="tag" style="border:none; padding:0; background:none; font-weight:700; color:var(--fb);">Yakında...</span>
- </div>
+    <section class="section">
+      <div class="sec-title">Endüstriyel Cam Hesaplayıcı (B2B)</div>
+      <p style="margin-bottom: 25px; font-size: 0.9rem; color: var(--ink2)">
+        Projelerinizde kullanacağınız endüstriyel camların ağırlık ve hacim değerlerini pratik şekilde hesaplayın.
+      </p>
+      <div class="calculator-grid">
+        <div class="calc-inputs">
+          <div class="form-group">
+            <label for="glassType">Cam Tipi</label>
+            <select id="glassType" class="calc-input" onchange="calculateGlass()">
+              <option value="dusakabin" data-density="2.5" data-u="5.7">Duşakabin Camı (Temperli)</option>
+              <option value="aydinlatma" data-density="2.45" data-u="5.8">Aydınlatma Camı (Borosilikat)</option>
+              <option value="mobilya" data-density="2.5" data-u="5.7">Mobilya Camı (Flotal/Düz)</option>
+              <option value="pano" data-density="2.5" data-u="5.6">Elektrik Panosu Camı (Robax/Seramik)</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="width">En (mm)</label>
+              <input type="number" id="width" class="calc-input" value="1000" min="10" max="5000" oninput="calculateGlass()">
+            </div>
+            <div class="form-group">
+              <label for="height">Boy (mm)</label>
+              <input type="number" id="height" class="calc-input" value="2000" min="10" max="5000" oninput="calculateGlass()">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="thickness">Kalınlık (mm)</label>
+            <select id="thickness" class="calc-input" onchange="calculateGlass()">
+              <option value="4">4 mm</option>
+              <option value="5">5 mm</option>
+              <option value="6" selected>6 mm</option>
+              <option value="8">8 mm</option>
+              <option value="10">10 mm</option>
+              <option value="12">12 mm</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="quantity">Adet</label>
+            <input type="number" id="quantity" class="calc-input" value="1" min="1" oninput="calculateGlass()">
+          </div>
+        </div>
+        <div class="calc-results">
+          <div class="result-box">
+            <span class="result-label">Toplam Ağırlık</span>
+            <span class="result-value" id="resWeight">30.00 kg</span>
+          </div>
+          <div class="result-box">
+            <span class="result-label">Toplam Alan</span>
+            <span class="result-value" id="resArea">2.00 m²</span>
+          </div>
+          <div class="result-box">
+            <span class="result-label">Tahmini Isı İletimi (U-Değeri)</span>
+            <span class="result-value" id="resU">5.7 W/m²K</span>
+          </div>
+          <div class="result-note">
+            * Yoğunluk ve teknik değerler standart formüllerle hesaplanmıştır. 
+            Büyük ölçekli projeleriniz için lütfen Dostcam ekibiyle iletişime geçin.
+          </div>
+        </div>
+      </div>
+    </section>
 
- <div class="card">
- <div class="card-type">Web Geliştirme / API</div>
- <h3>TARIK News & Finans Dashboard</h3>
- <p>Dış kaynaklardan canlı haber feed'leri, kripto ve döviz kurları ile BIST 100 verilerini anlık olarak çeken özel veri görselleştirme paneli.</p>
- <a href="news.html" class="btn btn-primary">Canlı Paneli Görüntüle →</a>
- </div>
+    <section class="section">
+      <div class="sec-title">Güncel Projeler & Sistemler</div>
+      <div class="projects-grid">
+        
+        <div class="card">
+          <div class="card-type">Yayın / E-Kitap</div>
+          <h3>Endüstriyel Cam Üretimi: Teknik Rehber</h3>
+          <p>Üretim hattı verimliliği, yangın analizleri ve global kalite standartları üzerine hazırlamakta olduğum kapsamlı sektörel e-kitap projesi.</p>
+          <div class="notify-form-container">
+            <form id="notifyForm" onsubmit="handleNotifySubmit(event)">
+              <input type="email" id="notifyEmail" placeholder="E-posta adresiniz" required class="calc-input" style="padding:8px 12px; font-size:0.75rem; border-radius:20px; width:calc(100% - 110px); display:inline-block; margin-bottom:0;">
+              <button type="submit" class="btn btn-primary" style="padding:8px 16px; font-size:0.7rem; border-radius:20px; width:100px; display:inline-block; float:right;">Kaydol</button>
+            </form>
+            <div id="notifyMessage" class="notify-msg-success" style="display:none; font-size:0.75rem; color:var(--fb); margin-top:8px; font-family:'Syne',sans-serif; font-weight:700;">
+              ✔ Başarıyla kaydoldunuz! E-kitap çıktığında bilgilendirileceksiniz.
+            </div>
+          </div>
+        </div>
 
- <div class="card">
- <div class="card-type">B2B & Operasyon</div>
- <h3>Dostcam Sipariş & Üretim Takip Ağı</h3>
- <p>Müşteri listeleri, stok yönetimi ve üretim durumu aşamalarını entegre eden, personel yetkilendirmeli iç operasyon sistemi.</p>
- <a href="https://www.dostcam.net" target="_blank" class="btn btn-outline">Dostcam Kurumsal ↗</a>
- </div>
+        <div class="card">
+          <div class="card-type">Web Geliştirme / API</div>
+          <h3>TARIK News & Finans Dashboard</h3>
+          <p>Dış kaynaklardan canlı haber feed'leri, kripto ve döviz kurları ile BIST 100 verilerini anlık olarak çeken özel veri görselleştirme paneli.</p>
+          <a href="news.html" class="btn btn-primary">Canlı Paneli Görüntüle →</a>
+        </div>
 
- </div>
- </section>
+        <div class="card">
+          <div class="card-type">B2B & Operasyon</div>
+          <h3>Dostcam Sipariş & Üretim Takip Ağı</h3>
+          <p>Müşteri listeleri, stok yönetimi ve üretim durumu aşamalarını entegre eden, personel yetkilendirmeli iç operasyon sistemi.</p>
+          <a href="https://www.dostcam.net" target="_blank" class="btn btn-outline">Dostcam Kurumsal ↗</a>
+        </div>
 
-</main>
+      </div>
+    </section>
 
-<footer>
- <div class="container">
- <h2 style="font-size:1.8rem; margin-bottom:24px; font-family:'Syne', sans-serif;">İletişim & Ağlar</h2>
- <div class="footer-links">
- <a href="https://www.linkedin.com/" target="_blank">LinkedIn</a>
- <a href="https://twitter.com/" target="_blank">X (Twitter)</a>
- <a href="https://www.dostcam.net" target="_blank">Dostcam.net</a>
- </div>
- <p style="margin-top:30px; font-size:0.75rem; opacity:0.6; font-family:'DM Mono',monospace;">© 2026 Tarık Donat. Tüm hakları saklıdır.</p>
- </div>
-</footer>
+  </main>
 
- <script>
- if ('serviceWorker' in navigator) {
-   window.addEventListener('load', () => {
-     navigator.serviceWorker.register('/sw.js');
-   });
- }
- </script>
+  <footer>
+    <div class="container">
+      <h2 style="font-size:1.8rem; margin-bottom:24px; font-family:'Syne', sans-serif;">İletişim & Ağlar</h2>
+      <div class="footer-links">
+        <a href="https://www.linkedin.com/in/tarik-donat/" target="_blank">LinkedIn</a>
+        <a href="https://x.com/tarikdonat" target="_blank">X (Twitter)</a>
+        <a href="#" onclick="openContactModal(event)">B2B İletişim</a>
+        <a href="https://www.dostcam.net" target="_blank">Dostcam.net</a>
+      </div>
+      <p style="margin-top:30px; font-size:0.75rem; opacity:0.6; font-family:'DM Mono',monospace;">© 2026 Tarık Donat. Tüm hakları saklıdır.</p>
+    </div>
+  </footer>
+
+  <!-- Uzmanlık Detay Modalı -->
+  <div class="modal" id="expertModal" onclick="if(event.target === this) closeExpertModal()">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeExpertModal()">&times;</span>
+      <h3 id="modalTitle">Uzmanlık Detayı</h3>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- B2B İletişim Modalı -->
+  <div class="modal" id="contactModal" onclick="if(event.target === this) closeContactModal()">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeContactModal()">&times;</span>
+      <h3>B2B İletişim Talebi</h3>
+      <form id="contactForm" onsubmit="handleContactSubmit(event)" style="margin-top:20px;">
+        <div class="form-group">
+          <label for="contactName">Adınız Soyadınız / Firma Adı</label>
+          <input type="text" id="contactName" required class="calc-input">
+        </div>
+        <div class="form-group">
+          <label for="contactEmail">E-Posta Adresiniz</label>
+          <input type="email" id="contactEmail" required class="calc-input">
+        </div>
+        <div class="form-group">
+          <label for="contactMessage">Mesajınız / Proje Detayı</label>
+          <textarea id="contactMessage" required class="calc-input" rows="4" style="resize:none;"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Mesaj Gönder</button>
+      </form>
+      <div id="contactSuccess" class="notify-msg-success" style="display:none; text-align:center; padding:20px 0;">
+        <span style="font-size:3rem;">✉️</span>
+        <h4 style="font-family:'Syne',sans-serif; color:var(--fb); margin-top:10px;">Mesajınız Alındı!</h4>
+        <p style="font-size:0.85rem; color:var(--ink2); margin-top:5px;">Tarık Donat en kısa sürede Dostcam üzerinden sizinle iletişime geçecektir.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Glow effect
+    const glow = document.getElementById('glow');
+    document.addEventListener('mousemove', (e) => {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    });
+
+    // Theme toggle
+    const body = document.body;
+    const themeToggle = document.getElementById('themeToggle');
+    
+    if (localStorage.getItem('theme') === 'dark') {
+      body.classList.add('dark');
+      themeToggle.textContent = '☀️';
+    } else {
+      themeToggle.textContent = '🌙';
+    }
+
+    themeToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      body.classList.toggle('dark');
+      const isDark = body.classList.contains('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      themeToggle.textContent = isDark ? '☀️' : '🌙';
+    });
+
+    // Click tracking and particle explosion
+    let clicks = localStorage.getItem('site_clicks') || 0;
+    document.addEventListener('click', (e) => {
+      clicks++;
+      localStorage.setItem('site_clicks', clicks);
+      createParticle(e.clientX, e.clientY);
+    });
+
+    function createParticle(x, y) {
+      const p = document.createElement('div');
+      p.className = 'click-particle';
+      p.style.left = x + 'px';
+      p.style.top = y + 'px';
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 600);
+    }
+
+    // Cam Hesaplayıcı Mantığı
+    function calculateGlass() {
+      const glassSelect = document.getElementById('glassType');
+      const selectedOption = glassSelect.options[glassSelect.selectedIndex];
+      const density = parseFloat(selectedOption.getAttribute('data-density'));
+      const uValue = parseFloat(selectedOption.getAttribute('data-u'));
+      
+      const w = parseFloat(document.getElementById('width').value) || 0;
+      const h = parseFloat(document.getElementById('height').value) || 0;
+      const t = parseFloat(document.getElementById('thickness').value) || 0;
+      const qty = parseInt(document.getElementById('quantity').value) || 1;
+      
+      const area = (w / 1000) * (h / 1000) * qty;
+      const weight = area * t * density;
+      
+      document.getElementById('resWeight').textContent = weight.toFixed(2) + ' kg';
+      document.getElementById('resArea').textContent = area.toFixed(2) + ' m²';
+      document.getElementById('resU').textContent = uValue.toFixed(1) + ' W/m²K';
+    }
+
+    // Uzmanlık Modalı Verisi ve Fonksiyonları
+    const expertData = {
+      dusakabin: {
+        title: 'Duşakabin Camları',
+        desc: 'Banyolarda emniyet ve estetiği bir araya getiren duşakabin camı çözümleri sunuyoruz.',
+        specs: [
+          '4mm, 5mm, 6mm, 8mm kalınlıklarda temperli emniyet camı',
+          'Kolay temizlenebilir kireç önleyici (EasyClean) kaplama opsiyonu',
+          'Füme, bronz, desenli ve ekstra net (low-iron) cam çeşitleri',
+          'EN 12150 standartlarında yüksek darbe mukavemeti'
+        ]
+      },
+      aydinlatma: {
+        title: 'Aydınlatma Camları',
+        desc: 'Isıl direnç gerektiren aydınlatma armatürleri ve endüstriyel aydınlatma sistemleri için özel cam tasarımları.',
+        specs: [
+          'Yüksek sıcaklıklara dayanıklı borosilikat temperli camlar',
+          'Kumlamalı (asitli) ve serigrafik baskılı homojen ışık dağılımı',
+          'Dış mekan şartlarına dayanıklı sızdırmazlık uyumu',
+          'IP koruma standartlarına uygun hassas toleranslar'
+        ]
+      },
+      mobilya: {
+        title: 'Mobilya Camları',
+        desc: 'İç mimari ve mobilya tasarım projeleri için üretilen nitelikli, dekoratif cam ve ayna modelleri.',
+        specs: [
+          'CNC rodajlı, bizoteli ve kanallı kenar işleme teknolojileri',
+          'Ultra-clear ayna, eskitme dekoratif ayna kaplamaları',
+          'UV yapıştırmaya uygun ultra şeffaf cam sehpalar ve kapaklar',
+          'Farklı renk tonlarında boyalı (serigrafik) cam çözümleri'
+        ]
+      },
+      pano: {
+        title: 'Elektrik Panosu Camları',
+        desc: 'Elektrik kabinleri, jeneratör panoları ve kontrol odaları için gözetleme camı çözümleri.',
+        specs: [
+          'Yüksek ısıl şoka ve darbelere dayanıklı gözetleme camları',
+          'Müşteri talebine özel ebatlı CNC kesim ve delik delme işlemleri',
+          'Elektromanyetik koruma sağlayan özel katman seçenekleri',
+          'Sızdırmazlığı sağlayan kauçuk fitil ve conta uyumlu kenarlar'
+        ]
+      }
+    };
+
+    function openExpertModal(key) {
+      const data = expertData[key];
+      if (!data) return;
+      document.getElementById('modalTitle').textContent = data.title;
+      let html = `<p>${data.desc}</p><ul>`;
+      data.specs.forEach(s => {
+        html += `<li>${s}</li>`;
+      });
+      html += `</ul>`;
+      document.getElementById('modalBody').innerHTML = html;
+      
+      const m = document.getElementById('expertModal');
+      m.classList.add('open');
+      m.style.display = 'flex';
+    }
+
+    function closeExpertModal() {
+      const m = document.getElementById('expertModal');
+      m.classList.remove('open');
+      setTimeout(() => {
+        m.style.display = 'none';
+      }, 300);
+    }
+
+    // Bülten Formu Mantığı
+    function handleNotifySubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('notifyEmail').value;
+      if (email) {
+        document.getElementById('notifyForm').style.display = 'none';
+        document.getElementById('notifyMessage').style.display = 'block';
+      }
+    }
+
+    // İletişim Modalı Mantığı
+    function openContactModal(e) {
+      e.preventDefault();
+      const m = document.getElementById('contactModal');
+      m.classList.add('open');
+      m.style.display = 'flex';
+    }
+
+    function closeContactModal() {
+      const m = document.getElementById('contactModal');
+      m.classList.remove('open');
+      setTimeout(() => {
+        m.style.display = 'none';
+      }, 300);
+    }
+
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      document.getElementById('contactForm').style.display = 'none';
+      document.getElementById('contactSuccess').style.display = 'block';
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+    
+    // Sayfa açılışında hesaplamayı çalıştır
+    calculateGlass();
+  </script>
 </body>
 </html>

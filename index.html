@@ -14,10 +14,24 @@
  --fb: #1F3065; --fb-koyu: #0d1a3a; --fb-sari: #FFED00;
  --bg: #f5f0e8; --surface: rgba(255, 253, 248, 0.6);
  --ink: #1a1612; --ink2: #4a4035; --border: rgba(216, 208, 194, 0.5);
+ --shadow: rgba(0, 0, 0, 0.03);
+ --shadow-hover: rgba(31, 48, 101, 0.12);
+ --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
  }
+ 
+ body.dark {
+ --bg: #0d121f;
+ --surface: rgba(18, 26, 47, 0.6);
+ --ink: #f5f0e8;
+ --ink2: #b5aa98;
+ --border: rgba(255, 255, 255, 0.08);
+ --shadow: rgba(0, 0, 0, 0.2);
+ --shadow-hover: rgba(255, 237, 0, 0.05);
+ }
+
  body {
  font-family: 'DM Mono', monospace;
- background: radial-gradient(circle at top left, #f5f0e8, #e8e2d6);
+ background: radial-gradient(circle at top left, var(--bg), #e8e2d6);
  color: var(--ink);
  min-height: 100vh;
  display: flex;
@@ -27,6 +41,11 @@
  padding: 20px;
  position: relative;
  overflow-x: hidden;
+ transition: background 0.5s ease, color 0.5s ease;
+ }
+ 
+ body.dark {
+ background: radial-gradient(circle at top left, var(--bg), #060a12);
  }
  
  /* Glassmorphism Arka Plan Süslemeleri */
@@ -37,6 +56,49 @@
  body::after {
  content: ''; position: absolute; bottom: -100px; left: -100px; width: 300px; height: 300px;
  background: var(--fb-sari); opacity: 0.05; border-radius: 50%; filter: blur(60px); z-index: -1;
+ }
+
+ .interactive-glow {
+ position: fixed;
+ width: 450px;
+ height: 450px;
+ background: radial-gradient(circle, rgba(31, 48, 101, 0.04) 0%, transparent 70%);
+ pointer-events: none;
+ transform: translate(-50%, -50%);
+ z-index: -1;
+ border-radius: 50%;
+ }
+ body.dark .interactive-glow {
+ background: radial-gradient(circle, rgba(255, 237, 0, 0.03) 0%, transparent 70%);
+ }
+
+ .theme-toggle {
+ position: fixed;
+ top: 20px;
+ right: 20px;
+ background: var(--surface);
+ border: 1px solid var(--border);
+ color: var(--ink);
+ width: 44px;
+ height: 44px;
+ border-radius: 50%;
+ cursor: pointer;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 1.2rem;
+ transition: var(--transition);
+ z-index: 1000;
+ backdrop-filter: blur(8px);
+ -webkit-backdrop-filter: blur(8px);
+ box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+ }
+ .theme-toggle:hover {
+ transform: scale(1.1) rotate(15deg);
+ border-color: var(--fb);
+ }
+ body.dark .theme-toggle:hover {
+ border-color: var(--fb-sari);
  }
 
  .portal-header {
@@ -51,7 +113,9 @@
  color: var(--fb);
  line-height: 1;
  }
+ body.dark .portal-header h1 { color: #f5f0e8; }
  .portal-header h1 span { color: var(--fb-koyu); }
+ body.dark .portal-header h1 span { color: var(--fb-sari); }
  .portal-header p {
  font-family: 'Instrument Serif', serif;
  font-size: 1.6rem;
@@ -67,6 +131,7 @@
  gap: 40px;
  width: 100%;
  max-width: 1000px;
+ z-index: 2;
  }
 
  .option-card {
@@ -79,13 +144,13 @@
  text-align: center;
  text-decoration: none;
  color: inherit;
- transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+ transition: var(--transition);
  position: relative;
  overflow: hidden;
  display: flex;
  flex-direction: column;
  align-items: center;
- box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+ box-shadow: 0 10px 30px var(--shadow);
  }
  
  .option-card::before {
@@ -101,10 +166,14 @@
  .option-card:hover {
  border-color: var(--fb);
  transform: translateY(-12px);
- box-shadow: 0 25px 50px rgba(31, 48, 101, 0.12);
+ box-shadow: 0 25px 50px var(--shadow-hover);
  background: rgba(255, 253, 248, 0.8);
  }
- 
+ body.dark .option-card:hover {
+ border-color: var(--fb-sari);
+ background: rgba(18, 26, 47, 0.8);
+ }
+  
  .option-card:hover::before {
  transform: scaleX(1);
  }
@@ -123,12 +192,22 @@
  transition: all 0.5s ease;
  border: 1px solid rgba(31, 48, 101, 0.1);
  }
+ body.dark .icon-wrapper {
+ background: rgba(255, 255, 255, 0.05);
+ color: var(--fb-sari);
+ border-color: rgba(255, 255, 255, 0.1);
+ }
 
  .option-card:hover .icon-wrapper {
  background: var(--fb);
  color: var(--fb-sari);
  transform: scale(1.1) rotate(5deg);
  box-shadow: 0 10px 20px rgba(31, 48, 101, 0.2);
+ }
+ body.dark .option-card:hover .icon-wrapper {
+ background: var(--fb-sari);
+ color: var(--fb-koyu);
+ box-shadow: 0 10px 20px rgba(255, 237, 0, 0.15);
  }
 
  .option-card h2 {
@@ -138,6 +217,7 @@
  margin-bottom: 15px;
  color: var(--fb-koyu);
  }
+ body.dark .option-card h2 { color: #f5f0e8; }
 
  .option-card p {
  font-size: 0.95rem;
@@ -160,12 +240,70 @@
  transition: all 0.3s;
  background: white;
  }
+ body.dark .enter-btn {
+ background: var(--fb-koyu);
+ color: #f5f0e8;
+ }
 
  .option-card:hover .enter-btn {
  background: var(--fb);
  color: var(--fb-sari);
  border-color: var(--fb);
  transform: scale(1.05);
+ }
+ body.dark .option-card:hover .enter-btn {
+ background: var(--fb-sari);
+ color: var(--fb-koyu);
+ border-color: var(--fb-sari);
+ }
+
+ .interaction-footer {
+ margin-top: 50px;
+ font-size: 0.75rem;
+ color: var(--ink2);
+ opacity: 0.7;
+ font-family: 'DM Mono', monospace;
+ background: var(--surface);
+ padding: 8px 18px;
+ border-radius: 20px;
+ border: 1px solid var(--border);
+ display: inline-flex;
+ align-items: center;
+ gap: 8px;
+ z-index: 2;
+ backdrop-filter: blur(8px);
+ transition: var(--transition);
+ cursor: pointer;
+ }
+ .interaction-footer:hover {
+ opacity: 1;
+ border-color: var(--fb);
+ transform: translateY(-2px);
+ }
+ body.dark .interaction-footer:hover {
+ border-color: var(--fb-sari);
+ }
+ 
+ .click-particle {
+ position: fixed;
+ width: 12px;
+ height: 12px;
+ border: 2px solid var(--fb);
+ border-radius: 50%;
+ pointer-events: none;
+ transform: translate(-50%, -50%) scale(0.5);
+ opacity: 0.8;
+ z-index: 9999;
+ animation: particleExplode 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+ }
+ body.dark .click-particle {
+ border-color: var(--fb-sari);
+ }
+ @keyframes particleExplode {
+ to {
+   transform: translate(-50%, -50%) scale(4.5);
+   opacity: 0;
+ }
  }
 
  @media(max-width: 600px) {
@@ -178,7 +316,7 @@
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Tarık Donat",
-  "jobTitle": "Yönetici & Endüstriyel Cam Uzmanı",
+  "jobTitle": "Yönetici & Teknoloji ve Finans Sistemleri Lideri",
   "worksFor": {
     "@type": "Organization",
     "name": "Dostcam Cam A.Ş."
@@ -192,36 +330,87 @@
 </script>
 </head>
 <body>
+  <div class="interactive-glow" id="glow"></div>
+  
+  <button class="theme-toggle" id="themeToggle" aria-label="Tema Değiştir">🌙</button>
 
- <div class="portal-header">
- <h1>Tarık <span>Donat</span></h1>
- <p>Endüstriyel Cam Çözümleri & Dijital Sistemler</p>
- </div>
+  <div class="portal-header">
+    <h1>Tarık <span>Donat</span></h1>
+    <p>Endüstriyel Cam Çözümleri & Dijital Sistemler</p>
+  </div>
 
- <div class="options-grid">
- 
- <a href="vitrin.html" class="option-card">
- <div class="icon-wrapper">🏗️</div>
- <h2>Kurumsal Profil</h2>
- <p>Endüstriyel cam çözümleri, üretim verimliliği sistemleri ve sektörel teknik yayın projelerim.</p>
- <div class="enter-btn">Profili İncele</div>
- </a>
+  <div class="options-grid">
+    <a href="vitrin.html" class="option-card">
+      <div class="icon-wrapper">🏗️</div>
+      <h2>Kurumsal Profil</h2>
+      <p>Endüstriyel cam çözümleri, üretim verimliliği sistemleri ve sektörel teknik yayın projelerim.</p>
+      <div class="enter-btn">Profili İncele</div>
+    </a>
 
- <a href="news.html" class="option-card">
- <div class="icon-wrapper">📊</div>
- <h2>TARIK News</h2>
- <p>BIST 100, kripto, döviz kurları ve canlı haber akışlarını içeren kişisel veri paneli.</p>
- <div class="enter-btn">Panele Git</div>
- </a>
+    <a href="news.html" class="option-card">
+      <div class="icon-wrapper">📊</div>
+      <h2>TARIK News</h2>
+      <p>BIST 100, kripto, döviz kurları ve canlı haber akışlarını içeren kişisel veri paneli.</p>
+      <div class="enter-btn">Panele Git</div>
+    </a>
+  </div>
 
- </div>
+  <div class="interaction-footer" id="interactionFooter">
+    ✨ Bu oturumdaki etkileşiminiz: <span id="clickCount">0</span> tıklama
+  </div>
 
- <script>
- if ('serviceWorker' in navigator) {
-   window.addEventListener('load', () => {
-     navigator.serviceWorker.register('/sw.js');
-   });
- }
- </script>
+  <script>
+    // Glow effect
+    const glow = document.getElementById('glow');
+    document.addEventListener('mousemove', (e) => {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    });
+
+    // Theme toggle
+    const body = document.body;
+    const themeToggle = document.getElementById('themeToggle');
+    
+    if (localStorage.getItem('theme') === 'dark') {
+      body.classList.add('dark');
+      themeToggle.textContent = '☀️';
+    } else {
+      themeToggle.textContent = '🌙';
+    }
+
+    themeToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      body.classList.toggle('dark');
+      const isDark = body.classList.contains('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      themeToggle.textContent = isDark ? '☀️' : '🌙';
+    });
+
+    // Click tracking and particle explosion
+    let clicks = localStorage.getItem('site_clicks') || 0;
+    document.getElementById('clickCount').textContent = clicks;
+
+    document.addEventListener('click', (e) => {
+      clicks++;
+      localStorage.setItem('site_clicks', clicks);
+      document.getElementById('clickCount').textContent = clicks;
+      createParticle(e.clientX, e.clientY);
+    });
+
+    function createParticle(x, y) {
+      const p = document.createElement('div');
+      p.className = 'click-particle';
+      p.style.left = x + 'px';
+      p.style.top = y + 'px';
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 600);
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
 </body>
 </html>
