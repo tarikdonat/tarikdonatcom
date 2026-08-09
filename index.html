@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tarık Donat | Dostcam & Dostglass — Endüstriyel Cam Çözümleri</title>
-<meta name="description" content="Tarık Donat — Dostcam Cam A.Ş. ve Dostglass markası altında 1989'dan bu yana endüstriyel temperli cam üretimi, ihracat ve dijital operasyon sistemleri.">
+<meta name="description" content="Tarık Donat — Dostcam Cam A.Ş. ve Dostglass markası altında 1989'dan bu yana, 3 nesildir endüstriyel temperli cam üretimi. 800 m²/gün kapasite, ±0.1mm lazer kesim. İhracat: İtalya, Hollanda, Almanya.">
 <link rel="canonical" href="https://www.tarikdonat.com/">
 <meta name="robots" content="index, follow">
 
@@ -149,8 +149,25 @@ padding: 12px 30px; border-radius: 40px; transition: all 0.3s; background: white
 body.dark .enter-btn { background: var(--fb-koyu); color: #f5f0e8; }
 .option-card:hover .enter-btn { background: var(--fb); color: var(--fb-sari); border-color: var(--fb); transform: scale(1.05); }
 body.dark .option-card:hover .enter-btn { background: var(--fb-sari); color: var(--fb-koyu); border-color: var(--fb-sari); }
+.portal-contact {
+display: flex; flex-wrap: wrap; justify-content: center; gap: 14px;
+margin-top: 45px; z-index: 2;
+}
+.portal-pill {
+display: inline-flex; align-items: center; gap: 8px;
+background: var(--surface); border: 1px solid var(--border); color: var(--ink);
+padding: 12px 24px; border-radius: 40px; text-decoration: none;
+font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700;
+backdrop-filter: blur(8px); transition: var(--transition);
+box-shadow: 0 4px 12px var(--shadow);
+}
+.portal-pill:hover {
+border-color: var(--fb); background: var(--fb); color: var(--fb-sari);
+transform: translateY(-3px);
+}
+body.dark .portal-pill:hover { border-color: var(--fb-sari); background: var(--fb-sari); color: var(--fb-koyu); }
 .interaction-footer {
-margin-top: 50px; font-size: 0.75rem; color: var(--ink2); opacity: 0.7;
+margin-top: 30px; font-size: 0.75rem; color: var(--ink2); opacity: 0.7;
 font-family: 'DM Mono', monospace; background: var(--surface); padding: 8px 18px;
 border-radius: 20px; border: 1px solid var(--border); display: inline-flex;
 align-items: center; gap: 8px; z-index: 2; backdrop-filter: blur(8px);
@@ -193,7 +210,7 @@ body.dark .click-particle { border-color: var(--fb-sari); }
 <div class="portal-header">
 <h1>Tarık <span>Donat</span></h1>
 <p>Endüstriyel Cam Çözümleri & Dijital Sistemler</p>
-<div class="est">Dostcam & Dostglass · 1989'dan bu yana · Çatalca / İstanbul</div>
+<div class="est">Dostcam & Dostglass · 1989'dan bu yana · 3. Nesil · Çatalca / İstanbul</div>
 </div>
 
 <div class="options-grid">
@@ -210,6 +227,11 @@ body.dark .click-particle { border-color: var(--fb-sari); }
 <p>BIST 100, kripto, döviz kurları ve canlı haber akışlarını içeren kişisel veri paneli.</p>
 <div class="enter-btn">Panele Git</div>
 </a>
+</div>
+
+<div class="portal-contact">
+<a href="mailto:tarik@dostcam.net" class="portal-pill">✉️ tarik@dostcam.net</a>
+<a href="https://www.dostcam.net/iletisim/" target="_blank" rel="noopener" class="portal-pill">🏭 Teklif Al ↗</a>
 </div>
 
 <div class="interaction-footer" id="interactionFooter">
