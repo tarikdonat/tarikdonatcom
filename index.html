@@ -3,414 +3,264 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tarık Donat | Portal</title>
+<title>Tarık Donat | Dostcam & Dostglass — Endüstriyel Cam Çözümleri</title>
+<meta name="description" content="Tarık Donat — Dostcam Cam A.Ş. ve Dostglass markası altında 1989'dan bu yana endüstriyel temperli cam üretimi, ihracat ve dijital operasyon sistemleri.">
+<link rel="canonical" href="https://www.tarikdonat.com/">
+<meta name="robots" content="index, follow">
+
+<!-- Open Graph / Social -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Tarık Donat | Dostcam & Dostglass">
+<meta property="og:description" content="Endüstriyel temperli cam üretimi, ihracat ve dijital sistemler.">
+<meta property="og:url" content="https://www.tarikdonat.com/">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Tarık Donat | Dostcam & Dostglass">
+<meta name="twitter:description" content="Endüstriyel temperli cam üretimi, ihracat ve dijital sistemler.">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1F3065">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231F3065'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='%23FFED00' font-family='sans-serif' font-weight='800'%3ETD%3C/text%3E%3C/svg%3E">
 <style>
- *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
- :root {
- --fb: #1F3065; --fb-koyu: #0d1a3a; --fb-sari: #FFED00;
- --bg: #f5f0e8; --surface: rgba(255, 253, 248, 0.6);
- --ink: #1a1612; --ink2: #4a4035; --border: rgba(216, 208, 194, 0.5);
- --shadow: rgba(0, 0, 0, 0.03);
- --shadow-hover: rgba(31, 48, 101, 0.12);
- --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
- }
- 
- body.dark {
- --bg: #0d121f;
- --surface: rgba(18, 26, 47, 0.6);
- --ink: #f5f0e8;
- --ink2: #b5aa98;
- --border: rgba(255, 255, 255, 0.08);
- --shadow: rgba(0, 0, 0, 0.2);
- --shadow-hover: rgba(255, 237, 0, 0.05);
- }
-
- body {
- font-family: 'DM Mono', monospace;
- background: radial-gradient(circle at top left, var(--bg), #e8e2d6);
- color: var(--ink);
- min-height: 100vh;
- display: flex;
- flex-direction: column;
- align-items: center;
- justify-content: center;
- padding: 20px;
- position: relative;
- overflow-x: hidden;
- transition: background 0.5s ease, color 0.5s ease;
- }
- 
- body.dark {
- background: radial-gradient(circle at top left, var(--bg), #060a12);
- }
- 
- /* Glassmorphism Arka Plan Süslemeleri */
- body::before {
- content: ''; position: absolute; top: -100px; right: -100px; width: 300px; height: 300px;
- background: var(--fb); opacity: 0.05; border-radius: 50%; filter: blur(60px); z-index: -1;
- }
- body::after {
- content: ''; position: absolute; bottom: -100px; left: -100px; width: 300px; height: 300px;
- background: var(--fb-sari); opacity: 0.05; border-radius: 50%; filter: blur(60px); z-index: -1;
- }
-
- .interactive-glow {
- position: fixed;
- width: 450px;
- height: 450px;
- background: radial-gradient(circle, rgba(31, 48, 101, 0.04) 0%, transparent 70%);
- pointer-events: none;
- transform: translate(-50%, -50%);
- z-index: -1;
- border-radius: 50%;
- }
- body.dark .interactive-glow {
- background: radial-gradient(circle, rgba(255, 237, 0, 0.03) 0%, transparent 70%);
- }
-
- .theme-toggle {
- position: fixed;
- top: 20px;
- right: 20px;
- background: var(--surface);
- border: 1px solid var(--border);
- color: var(--ink);
- width: 44px;
- height: 44px;
- border-radius: 50%;
- cursor: pointer;
- display: flex;
- align-items: center;
- justify-content: center;
- font-size: 1.2rem;
- transition: var(--transition);
- z-index: 1000;
- backdrop-filter: blur(8px);
- -webkit-backdrop-filter: blur(8px);
- box-shadow: 0 4px 10px rgba(0,0,0,0.05);
- }
- .theme-toggle:hover {
- transform: scale(1.1) rotate(15deg);
- border-color: var(--fb);
- }
- body.dark .theme-toggle:hover {
- border-color: var(--fb-sari);
- }
-
- .portal-header {
- text-align: center;
- margin-bottom: 50px;
- }
- .portal-header h1 {
- font-family: 'Syne', sans-serif;
- font-size: clamp(2.5rem, 6vw, 4rem);
- font-weight: 800;
- letter-spacing: 2px;
- color: var(--fb);
- line-height: 1;
- }
- body.dark .portal-header h1 { color: #f5f0e8; }
- .portal-header h1 span { color: var(--fb-koyu); }
- body.dark .portal-header h1 span { color: var(--fb-sari); }
- .portal-header p {
- font-family: 'Instrument Serif', serif;
- font-size: 1.6rem;
- font-style: italic;
- color: var(--ink2);
- margin-top: 15px;
- opacity: 0.8;
- }
-
- .options-grid {
- display: grid;
- grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
- gap: 40px;
- width: 100%;
- max-width: 1000px;
- z-index: 2;
- }
-
- .option-card {
- background: var(--surface);
- backdrop-filter: blur(12px);
- -webkit-backdrop-filter: blur(12px);
- border: 1px solid var(--border);
- border-radius: 24px;
- padding: 50px 35px;
- text-align: center;
- text-decoration: none;
- color: inherit;
- transition: var(--transition);
- position: relative;
- overflow: hidden;
- display: flex;
- flex-direction: column;
- align-items: center;
- box-shadow: 0 10px 30px var(--shadow);
- }
- 
- .option-card::before {
- content: '';
- position: absolute;
- top: 0; left: 0; width: 100%; height: 6px;
- background: linear-gradient(90deg, var(--fb), var(--fb-sari));
- transform: scaleX(0);
- transform-origin: left;
- transition: transform 0.5s ease;
- }
-
- .option-card:hover {
- border-color: var(--fb);
- transform: translateY(-12px);
- box-shadow: 0 25px 50px var(--shadow-hover);
- background: rgba(255, 253, 248, 0.8);
- }
- body.dark .option-card:hover {
- border-color: var(--fb-sari);
- background: rgba(18, 26, 47, 0.8);
- }
-  
- .option-card:hover::before {
- transform: scaleX(1);
- }
-
- .icon-wrapper {
- width: 90px;
- height: 90px;
- border-radius: 50%;
- background: rgba(31, 48, 101, 0.05);
- display: flex;
- align-items: center;
- justify-content: center;
- font-size: 2.5rem;
- margin-bottom: 28px;
- color: var(--fb);
- transition: all 0.5s ease;
- border: 1px solid rgba(31, 48, 101, 0.1);
- }
- body.dark .icon-wrapper {
- background: rgba(255, 255, 255, 0.05);
- color: var(--fb-sari);
- border-color: rgba(255, 255, 255, 0.1);
- }
-
- .option-card:hover .icon-wrapper {
- background: var(--fb);
- color: var(--fb-sari);
- transform: scale(1.1) rotate(5deg);
- box-shadow: 0 10px 20px rgba(31, 48, 101, 0.2);
- }
- body.dark .option-card:hover .icon-wrapper {
- background: var(--fb-sari);
- color: var(--fb-koyu);
- box-shadow: 0 10px 20px rgba(255, 237, 0, 0.15);
- }
-
- .option-card h2 {
- font-family: 'Syne', sans-serif;
- font-size: 1.8rem;
- font-weight: 700;
- margin-bottom: 15px;
- color: var(--fb-koyu);
- }
- body.dark .option-card h2 { color: #f5f0e8; }
-
- .option-card p {
- font-size: 0.95rem;
- color: var(--ink2);
- line-height: 1.7;
- margin-bottom: 30px;
- flex-grow: 1;
- }
-
- .enter-btn {
- font-family: 'Syne', sans-serif;
- font-size: 0.8rem;
- font-weight: 700;
- letter-spacing: 2px;
- text-transform: uppercase;
- color: var(--fb);
- border: 1px solid var(--border);
- padding: 12px 30px;
- border-radius: 40px;
- transition: all 0.3s;
- background: white;
- }
- body.dark .enter-btn {
- background: var(--fb-koyu);
- color: #f5f0e8;
- }
-
- .option-card:hover .enter-btn {
- background: var(--fb);
- color: var(--fb-sari);
- border-color: var(--fb);
- transform: scale(1.05);
- }
- body.dark .option-card:hover .enter-btn {
- background: var(--fb-sari);
- color: var(--fb-koyu);
- border-color: var(--fb-sari);
- }
-
- .interaction-footer {
- margin-top: 50px;
- font-size: 0.75rem;
- color: var(--ink2);
- opacity: 0.7;
- font-family: 'DM Mono', monospace;
- background: var(--surface);
- padding: 8px 18px;
- border-radius: 20px;
- border: 1px solid var(--border);
- display: inline-flex;
- align-items: center;
- gap: 8px;
- z-index: 2;
- backdrop-filter: blur(8px);
- transition: var(--transition);
- cursor: pointer;
- }
- .interaction-footer:hover {
- opacity: 1;
- border-color: var(--fb);
- transform: translateY(-2px);
- }
- body.dark .interaction-footer:hover {
- border-color: var(--fb-sari);
- }
- 
- .click-particle {
- position: fixed;
- width: 12px;
- height: 12px;
- border: 2px solid var(--fb);
- border-radius: 50%;
- pointer-events: none;
- transform: translate(-50%, -50%) scale(0.5);
- opacity: 0.8;
- z-index: 9999;
- animation: particleExplode 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
- }
- body.dark .click-particle {
- border-color: var(--fb-sari);
- }
- @keyframes particleExplode {
- to {
-   transform: translate(-50%, -50%) scale(4.5);
-   opacity: 0;
- }
- }
-
- @media(max-width: 600px) {
- .options-grid { grid-template-columns: 1fr; }
- .option-card { padding: 40px 25px; }
- }
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+--fb: #1F3065; --fb-koyu: #0d1a3a; --fb-sari: #FFED00;
+--bg: #f5f0e8; --surface: rgba(255, 253, 248, 0.6);
+--ink: #1a1612; --ink2: #4a4035; --border: rgba(216, 208, 194, 0.5);
+--shadow: rgba(0, 0, 0, 0.03);
+--shadow-hover: rgba(31, 48, 101, 0.12);
+--transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+body.dark {
+--bg: #0d121f;
+--surface: rgba(18, 26, 47, 0.6);
+--ink: #f5f0e8;
+--ink2: #b5aa98;
+--border: rgba(255, 255, 255, 0.08);
+--shadow: rgba(0, 0, 0, 0.2);
+--shadow-hover: rgba(255, 237, 0, 0.05);
+}
+body {
+font-family: 'DM Mono', monospace;
+background: radial-gradient(circle at top left, var(--bg), #e8e2d6);
+color: var(--ink);
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 20px;
+position: relative;
+overflow-x: hidden;
+transition: background 0.5s ease, color 0.5s ease;
+}
+body.dark {
+background: radial-gradient(circle at top left, var(--bg), #060a12);
+}
+body::before {
+content: ''; position: absolute; top: -100px; right: -100px; width: 300px; height: 300px;
+background: var(--fb); opacity: 0.05; border-radius: 50%; filter: blur(60px); z-index: -1;
+}
+body::after {
+content: ''; position: absolute; bottom: -100px; left: -100px; width: 300px; height: 300px;
+background: var(--fb-sari); opacity: 0.05; border-radius: 50%; filter: blur(60px); z-index: -1;
+}
+.interactive-glow {
+position: fixed; width: 450px; height: 450px;
+background: radial-gradient(circle, rgba(31, 48, 101, 0.04) 0%, transparent 70%);
+pointer-events: none; transform: translate(-50%, -50%); z-index: -1; border-radius: 50%;
+}
+body.dark .interactive-glow {
+background: radial-gradient(circle, rgba(255, 237, 0, 0.03) 0%, transparent 70%);
+}
+.theme-toggle {
+position: fixed; top: 20px; right: 20px;
+background: var(--surface); border: 1px solid var(--border); color: var(--ink);
+width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
+display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+transition: var(--transition); z-index: 1000;
+backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.theme-toggle:hover { transform: scale(1.1) rotate(15deg); border-color: var(--fb); }
+body.dark .theme-toggle:hover { border-color: var(--fb-sari); }
+.portal-header { text-align: center; margin-bottom: 50px; }
+.portal-header h1 {
+font-family: 'Syne', sans-serif;
+font-size: clamp(2.5rem, 6vw, 4rem);
+font-weight: 800; letter-spacing: 2px; color: var(--fb); line-height: 1;
+}
+body.dark .portal-header h1 { color: #f5f0e8; }
+.portal-header h1 span { color: var(--fb-koyu); }
+body.dark .portal-header h1 span { color: var(--fb-sari); }
+.portal-header p {
+font-family: 'Instrument Serif', serif; font-size: 1.6rem; font-style: italic;
+color: var(--ink2); margin-top: 15px; opacity: 0.8;
+}
+.portal-header .est {
+font-family: 'DM Mono', monospace; font-size: 0.75rem; letter-spacing: 2px;
+color: var(--ink2); opacity: 0.6; margin-top: 8px; text-transform: uppercase;
+}
+.options-grid {
+display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+gap: 40px; width: 100%; max-width: 1000px; z-index: 2;
+}
+.option-card {
+background: var(--surface); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+border: 1px solid var(--border); border-radius: 24px; padding: 50px 35px;
+text-align: center; text-decoration: none; color: inherit; transition: var(--transition);
+position: relative; overflow: hidden; display: flex; flex-direction: column;
+align-items: center; box-shadow: 0 10px 30px var(--shadow);
+}
+.option-card::before {
+content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+background: linear-gradient(90deg, var(--fb), var(--fb-sari));
+transform: scaleX(0); transform-origin: left; transition: transform 0.5s ease;
+}
+.option-card:hover {
+border-color: var(--fb); transform: translateY(-12px);
+box-shadow: 0 25px 50px var(--shadow-hover); background: rgba(255, 253, 248, 0.8);
+}
+body.dark .option-card:hover { border-color: var(--fb-sari); background: rgba(18, 26, 47, 0.8); }
+.option-card:hover::before { transform: scaleX(1); }
+.icon-wrapper {
+width: 90px; height: 90px; border-radius: 50%; background: rgba(31, 48, 101, 0.05);
+display: flex; align-items: center; justify-content: center; font-size: 2.5rem;
+margin-bottom: 28px; color: var(--fb); transition: all 0.5s ease;
+border: 1px solid rgba(31, 48, 101, 0.1);
+}
+body.dark .icon-wrapper { background: rgba(255, 255, 255, 0.05); color: var(--fb-sari); border-color: rgba(255, 255, 255, 0.1); }
+.option-card:hover .icon-wrapper {
+background: var(--fb); color: var(--fb-sari); transform: scale(1.1) rotate(5deg);
+box-shadow: 0 10px 20px rgba(31, 48, 101, 0.2);
+}
+body.dark .option-card:hover .icon-wrapper { background: var(--fb-sari); color: var(--fb-koyu); box-shadow: 0 10px 20px rgba(255, 237, 0, 0.15); }
+.option-card h2 { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 700; margin-bottom: 15px; color: var(--fb-koyu); }
+body.dark .option-card h2 { color: #f5f0e8; }
+.option-card p { font-size: 0.95rem; color: var(--ink2); line-height: 1.7; margin-bottom: 30px; flex-grow: 1; }
+.enter-btn {
+font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 2px;
+text-transform: uppercase; color: var(--fb); border: 1px solid var(--border);
+padding: 12px 30px; border-radius: 40px; transition: all 0.3s; background: white;
+}
+body.dark .enter-btn { background: var(--fb-koyu); color: #f5f0e8; }
+.option-card:hover .enter-btn { background: var(--fb); color: var(--fb-sari); border-color: var(--fb); transform: scale(1.05); }
+body.dark .option-card:hover .enter-btn { background: var(--fb-sari); color: var(--fb-koyu); border-color: var(--fb-sari); }
+.interaction-footer {
+margin-top: 50px; font-size: 0.75rem; color: var(--ink2); opacity: 0.7;
+font-family: 'DM Mono', monospace; background: var(--surface); padding: 8px 18px;
+border-radius: 20px; border: 1px solid var(--border); display: inline-flex;
+align-items: center; gap: 8px; z-index: 2; backdrop-filter: blur(8px);
+transition: var(--transition); cursor: pointer;
+}
+.interaction-footer:hover { opacity: 1; border-color: var(--fb); transform: translateY(-2px); }
+body.dark .interaction-footer:hover { border-color: var(--fb-sari); }
+.click-particle {
+position: fixed; width: 12px; height: 12px; border: 2px solid var(--fb); border-radius: 50%;
+pointer-events: none; transform: translate(-50%, -50%) scale(0.5); opacity: 0.8; z-index: 9999;
+animation: particleExplode 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+body.dark .click-particle { border-color: var(--fb-sari); }
+@keyframes particleExplode { to { transform: translate(-50%, -50%) scale(4.5); opacity: 0; } }
+@media(max-width: 600px) {
+.options-grid { grid-template-columns: 1fr; }
+.option-card { padding: 40px 25px; }
+}
+@media (prefers-reduced-motion: reduce) {
+* { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
 </style>
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Tarık Donat",
-  "jobTitle": "Yönetici & Teknoloji ve Finans Sistemleri Lideri",
-  "worksFor": {
-    "@type": "Organization",
-    "name": "Dostcam Cam A.Ş."
-  },
-  "url": "https://www.tarikdonat.com",
-  "sameAs": [
-    "https://www.linkedin.com/",
-    "https://twitter.com/"
-  ]
+"@context": "https://schema.org",
+"@type": "Organization",
+"name": "Dostcam Cam A.Ş. / Dostglass",
+"founder": { "@type": "Person", "name": "Tarık Donat" },
+"foundingDate": "1989",
+"url": "https://www.tarikdonat.com",
+"sameAs": ["https://www.dostcam.net"],
+"address": { "@type": "PostalAddress", "addressLocality": "Çatalca / İstanbul", "addressCountry": "TR" }
 }
 </script>
 </head>
 <body>
-  <div class="interactive-glow" id="glow"></div>
-  
-  <button class="theme-toggle" id="themeToggle" aria-label="Tema Değiştir">🌙</button>
+<div class="interactive-glow" id="glow"></div>
+<button class="theme-toggle" id="themeToggle" aria-label="Tema Değiştir">🌙</button>
 
-  <div class="portal-header">
-    <h1>Tarık <span>Donat</span></h1>
-    <p>Endüstriyel Cam Çözümleri & Dijital Sistemler</p>
-  </div>
+<div class="portal-header">
+<h1>Tarık <span>Donat</span></h1>
+<p>Endüstriyel Cam Çözümleri & Dijital Sistemler</p>
+<div class="est">Dostcam & Dostglass · 1989'dan bu yana · Çatalca / İstanbul</div>
+</div>
 
-  <div class="options-grid">
-    <a href="vitrin.html" class="option-card">
-      <div class="icon-wrapper">🏗️</div>
-      <h2>Kurumsal Profil</h2>
-      <p>Endüstriyel cam çözümleri, üretim verimliliği sistemleri ve sektörel teknik yayın projelerim.</p>
-      <div class="enter-btn">Profili İncele</div>
-    </a>
+<div class="options-grid">
+<a href="vitrin.html" class="option-card">
+<div class="icon-wrapper">🏗️</div>
+<h2>Kurumsal Profil</h2>
+<p>Endüstriyel cam çözümleri, üretim verimliliği sistemleri ve sektörel teknik yayın projelerim.</p>
+<div class="enter-btn">Profili İncele</div>
+</a>
 
-    <a href="news.html" class="option-card">
-      <div class="icon-wrapper">📊</div>
-      <h2>TARIK News</h2>
-      <p>BIST 100, kripto, döviz kurları ve canlı haber akışlarını içeren kişisel veri paneli.</p>
-      <div class="enter-btn">Panele Git</div>
-    </a>
-  </div>
+<a href="news.html" class="option-card">
+<div class="icon-wrapper">📊</div>
+<h2>TARIK News</h2>
+<p>BIST 100, kripto, döviz kurları ve canlı haber akışlarını içeren kişisel veri paneli.</p>
+<div class="enter-btn">Panele Git</div>
+</a>
+</div>
 
-  <div class="interaction-footer" id="interactionFooter">
-    ✨ Bu oturumdaki etkileşiminiz: <span id="clickCount">0</span> tıklama
-  </div>
+<div class="interaction-footer" id="interactionFooter">
+✨ Bu oturumdaki etkileşiminiz: <span id="clickCount">0</span> tıklama
+</div>
 
-  <script>
-    // Glow effect
-    const glow = document.getElementById('glow');
-    document.addEventListener('mousemove', (e) => {
-      glow.style.left = e.clientX + 'px';
-      glow.style.top = e.clientY + 'px';
-    });
+<script>
+const glow = document.getElementById('glow');
+document.addEventListener('mousemove', (e) => {
+glow.style.left = e.clientX + 'px';
+glow.style.top = e.clientY + 'px';
+});
 
-    // Theme toggle
-    const body = document.body;
-    const themeToggle = document.getElementById('themeToggle');
-    
-    if (localStorage.getItem('theme') === 'dark') {
-      body.classList.add('dark');
-      themeToggle.textContent = '☀️';
-    } else {
-      themeToggle.textContent = '🌙';
-    }
+const body = document.body;
+const themeToggle = document.getElementById('themeToggle');
+if (localStorage.getItem('theme') === 'dark') {
+body.classList.add('dark');
+themeToggle.textContent = '☀️';
+} else {
+themeToggle.textContent = '🌙';
+}
+themeToggle.addEventListener('click', (e) => {
+e.stopPropagation();
+body.classList.toggle('dark');
+const isDark = body.classList.contains('dark');
+localStorage.setItem('theme', isDark ? 'dark' : 'light');
+themeToggle.textContent = isDark ? '☀️' : '🌙';
+});
 
-    themeToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      body.classList.toggle('dark');
-      const isDark = body.classList.contains('dark');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
-      themeToggle.textContent = isDark ? '☀️' : '🌙';
-    });
+let clicks = localStorage.getItem('site_clicks') || 0;
+document.getElementById('clickCount').textContent = clicks;
+document.addEventListener('click', (e) => {
+clicks++;
+localStorage.setItem('site_clicks', clicks);
+document.getElementById('clickCount').textContent = clicks;
+createParticle(e.clientX, e.clientY);
+});
+function createParticle(x, y) {
+const p = document.createElement('div');
+p.className = 'click-particle';
+p.style.left = x + 'px';
+p.style.top = y + 'px';
+document.body.appendChild(p);
+setTimeout(() => p.remove(), 600);
+}
 
-    // Click tracking and particle explosion
-    let clicks = localStorage.getItem('site_clicks') || 0;
-    document.getElementById('clickCount').textContent = clicks;
-
-    document.addEventListener('click', (e) => {
-      clicks++;
-      localStorage.setItem('site_clicks', clicks);
-      document.getElementById('clickCount').textContent = clicks;
-      createParticle(e.clientX, e.clientY);
-    });
-
-    function createParticle(x, y) {
-      const p = document.createElement('div');
-      p.className = 'click-particle';
-      p.style.left = x + 'px';
-      p.style.top = y + 'px';
-      document.body.appendChild(p);
-      setTimeout(() => p.remove(), 600);
-    }
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js');
-      });
-    }
-  </script>
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', () => {
+navigator.serviceWorker.register('/sw.js');
+});
+}
+</script>
 </body>
 </html>
