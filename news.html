@@ -663,23 +663,31 @@ function updateClock() {
 }
 updateClock(); setInterval(updateClock, 60000);
 
-// --- BİST 100 (Proxy Kullanır) ---
+// --- BİST 100 (Truncgil, CORS açık; Yahoo proxy gerektirdiği için yedek) ---
 async function fetchBist() {
   setLd('Borsa verileri alınıyor...');
   try {
-    const res = await proxyFetch(BIST_URL + '&v=' + TS);
+    const res = await fetch('https://finans.truncgil.com/v4/today.json', { signal: AbortSignal.timeout(10000) });
     if (res.ok) {
       const data = await res.json();
-      if (data && data.chart && data.chart.result && data.chart.result[0]) {
-        const result = data.chart.result[0];
-        const currentPrice = result.meta.regularMarketPrice;
-        const previousClose = result.meta.previousClose ?? result.meta.chartPreviousClose;
-        const changePercent = ((currentPrice - previousClose) / previousClose) * 100;
-        bistData = { price: currentPrice.toFixed(2), change: changePercent.toFixed(2), up: changePercent >= 0 };
+      if (data && data.XU100 && data.XU100.Selling) {
+        const changePercent = parseFloat(data.XU100.Change) || 0;
+        bistData = { price: Number(data.XU100.Selling).toFixed(2), change: changePercent.toFixed(2), up: changePercent >= 0 };
         renderBist();
         return;
       }
     }
+  } catch(e) { console.warn("Truncgil BIST başarısız, Yahoo deneniyor", e); }
+  try {
+    const res = await proxyFetch(BIST_URL + '&v=' + TS);
+    const data = await res.json();
+    const result = data.chart.result[0];
+    const currentPrice = result.meta.regularMarketPrice;
+    const previousClose = result.meta.previousClose ?? result.meta.chartPreviousClose;
+    const changePercent = ((currentPrice - previousClose) / previousClose) * 100;
+    bistData = { price: currentPrice.toFixed(2), change: changePercent.toFixed(2), up: changePercent >= 0 };
+    renderBist();
+    return;
   } catch(e) { console.error("Borsa hatası", e); }
   bistData = { price: 'Veri Yok', change: '0', up: true };
   renderBist();
@@ -763,7 +771,7 @@ let holidayData = null;
 async function fetchHolidays() {
   setLd('Resmi tatiller alınıyor...');
   try {
-    const res = await proxyFetch('https://date.nager.at/api/v3/NextPublicHolidays/TR?v=' + TS);
+    const res = await fetch('https://date.nager.at/api/v3/NextPublicHolidays/TR', { signal: AbortSignal.timeout(10000) });
     if (res.ok) holidayData = await res.json();
   } catch (e) { console.error('Tatil hatası', e); }
   renderHolidays();
@@ -797,12 +805,12 @@ async function fetchFinans() {
           let goldChange = '0';
           
           try {
-             const goldRes = await proxyFetch('https://finans.truncgil.com/v4/today.json?v=' + TS);
+             const goldRes = await fetch('https://finans.truncgil.com/v4/today.json', { signal: AbortSignal.timeout(10000) });
              if(goldRes.ok) {
                  const goldData = await goldRes.json();
-                 if(goldData && goldData.GAU) {
-                     goldPrice = goldData.GAU.Buying;
-                     goldChange = goldData.GAU.Change;
+                 if(goldData && goldData.GRA) {
+                     goldPrice = goldData.GRA.Buying;
+                     goldChange = goldData.GRA.Change;
                  }
              }
           } catch(e) { console.warn("Altın verisi alınamadı"); }
@@ -893,7 +901,26 @@ function renderCrypto() {
 }
 
 // --- RSS HABERLERİ ---
+// Önce rss2json (her origin'e CORS açık, proxy gerektirmez); olmazsa proxy ile ham XML.
 async function fetchRSS(url) {
+  try {
+    const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url), { signal: AbortSignal.timeout(10000) });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.status === 'ok' && Array.isArray(data.items) && data.items.length) {
+        return data.items.map(it => {
+          let desc = clean(it.description || '');
+          if (desc.length > 150) desc = desc.substring(0, 150) + '...';
+          const date = it.pubDate ? new Date(it.pubDate.replace(' ', 'T') + 'Z') : new Date();
+          return { title: clean(it.title || ''), desc, link: it.link || '#', date: isNaN(date) ? new Date() : date };
+        }).filter(n => n.title.length > 5);
+      }
+    }
+  } catch (e) { console.warn('rss2json başarısız, proxy deneniyor:', url); }
+  return fetchRSSviaProxy(url);
+}
+
+async function fetchRSSviaProxy(url) {
   try {
     const sep = url.includes('?') ? '&' : '?';
     const response = await proxyFetch(url + sep + 'v=' + TS);
