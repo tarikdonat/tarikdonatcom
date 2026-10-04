@@ -634,7 +634,7 @@ body.dark .spark.down{color:#f28b8b}
 'use strict';
 // Cloudflare Worker RSS vekili (workers/rss-proxy). Boşsa yalnızca rss2json kullanılır.
 // Sözleşme: GET <RSS_WORKER_URL>?url=<encodeURIComponent(feedUrl)> -> 200 text/xml (ham RSS), CORS açık.
-const RSS_WORKER_URL = '';
+const RSS_WORKER_URL = 'https://tarik-rss.tarikdonat-1a6.workers.dev';
 /* TARIK News — tek dosya, bağımlılıksız.
    Kaynaklar (tarikdonat.com origin'inden CORS ile doğrulandı):
    api.rss2json.com, finans.truncgil.com, api.exchangerate-api.com, api.coingecko.com,
