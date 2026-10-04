@@ -327,6 +327,9 @@ body.dark .click-particle {
     <div class="twocol">
       <div><div class="ng" id="tN" style="grid-template-columns:1fr 1fr"></div></div>
       <div>
+        <div class="ibox"><div class="ibox-t">🌤 Hava Durumu</div><div id="wxM"><div class="ir"><span class="lb">Yükleniyor...</span></div></div></div>
+        <div class="ibox"><div class="ibox-t">🌍 Son Depremler (Kandilli)</div><div id="eqM"><div class="ir"><span class="lb">Yükleniyor...</span></div></div></div>
+        <div class="ibox"><div class="ibox-t">📅 Yaklaşan Resmi Tatiller</div><div id="hdM"><div class="ir"><span class="lb">Yükleniyor...</span></div></div></div>
         <div class="ibox"><div class="ibox-t">Döviz & Altın Kurları</div><div id="fxM"><div class="ir"><span class="lb">Yükleniyor...</span></div></div><div style="font-size:.45rem;color:var(--ink4);margin-top:4px;text-align:right" id="fxT"></div></div>
       </div>
     </div>
@@ -413,7 +416,7 @@ body.dark .click-particle {
 
 <footer>
   <div class="fl"><div class="fsh"><svg viewBox="0 0 56 64" fill="none"><path d="M28 2L52 14V38C52 52 28 62 28 62C28 62 4 52 4 38V14L28 2Z" fill="#1F3065" stroke="#FFED00" stroke-width="1.5"/><text x="28" y="34" text-anchor="middle" fill="#FFED00" font-family="Syne,sans-serif" font-weight="800" font-size="14">TN</text><text x="28" y="44" text-anchor="middle" fill="rgba(255,237,0,0.4)" font-family="Syne,sans-serif" font-weight="600" font-size="5" letter-spacing="1.5">NEWS</text></svg></div><div class="fn"><span>TARIK</span> NEWS</div></div>
-  <p>Veriler: TRT Haber RSS, CoinGecko, Yahoo Finance, Exchangerate-API</p>
+  <p>Veriler: TRT Haber, AA, Bloomberg HT RSS · CoinGecko · Yahoo Finance · Exchangerate-API · Open-Meteo · Kandilli (deprem) · Nager.Date (tatiller)</p>
   <p style="margin-top:2px;color:var(--ink4)">Son güncelleme: <span id="lu"></span></p>
 </footer>
 
@@ -421,7 +424,23 @@ body.dark .click-particle {
 
 <script>
 // ==== YEPYENİ PROXY VE DOĞRUDAN (NATIVE) API YAPISI ====
-const CORS_PROXY = 'https://api.codetabs.com/v1/proxy?quest='; 
+// Birden fazla CORS proxy servisi: biri çökerse otomatik olarak diğerine geçer.
+const PROXIES = [
+  url => 'https://corsproxy.io/?url=' + encodeURIComponent(url),
+  url => 'https://proxy.cors.sh/' + url,
+  url => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url)
+];
+async function proxyFetch(targetUrl) {
+  let lastErr;
+  for (const buildUrl of PROXIES) {
+    try {
+      const res = await fetch(buildUrl(targetUrl), { signal: AbortSignal.timeout(8000) });
+      if (res.ok) return res;
+      lastErr = new Error('HTTP ' + res.status);
+    } catch (e) { lastErr = e; }
+  }
+  throw lastErr || new Error('Tüm proxy servisleri başarısız');
+}
 
 // Önbellek sorunlarını atlatmak için zaman damgası
 const TS = new Date().getTime();
@@ -431,12 +450,19 @@ const BIST_URL = 'https://query1.finance.yahoo.com/v8/finance/chart/XU100.IS?int
 const COINGECKO_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,ripple,cardano,dogecoin,avalanche-2,polkadot&order=market_cap_desc&per_page=8&sparkline=false&price_change_percentage=24h';
 
 const RSS_FEEDS = {
-  turkey: ['https://www.trthaber.com/sondakika_articles.rss', 'https://www.trthaber.com/gundem_articles.rss'],
-  world: ['https://www.trthaber.com/dunya_articles.rss'],
-  economy: ['https://www.trthaber.com/ekonomi_articles.rss'],
-  tech: ['https://www.trthaber.com/bilim_teknoloji_articles.rss'],
-  spor: ['https://www.trthaber.com/spor_articles.rss']
+  turkey: ['https://www.trthaber.com/sondakika_articles.rss', 'https://www.trthaber.com/gundem_articles.rss', 'https://www.aa.com.tr/tr/rss/default?cat=guncel'],
+  world: ['https://www.trthaber.com/dunya_articles.rss', 'https://www.aa.com.tr/tr/rss/default?cat=dunya'],
+  economy: ['https://www.trthaber.com/ekonomi_articles.rss', 'https://www.aa.com.tr/tr/rss/default?cat=ekonomi', 'https://www.bloomberght.com/rss'],
+  tech: ['https://www.trthaber.com/bilim_teknoloji_articles.rss', 'https://www.aa.com.tr/tr/rss/default?cat=bilim-teknoloji'],
+  spor: ['https://www.trthaber.com/spor_articles.rss', 'https://www.aa.com.tr/tr/rss/default?cat=spor']
 };
+
+function sourceOf(url) {
+  if (url.includes('aa.com.tr')) return 'AA';
+  if (url.includes('bloomberght.com')) return 'Bloomberg HT';
+  if (url.includes('trthaber.com')) return 'TRT Haber';
+  return 'Haber';
+}
 
 let allNews = [], finansData = null, cryptoData = null, bistData = null;
 
@@ -511,10 +537,12 @@ function renderWatchlist() {
   watchlist.forEach(item => {
     let valueStr = 'Yükleniyor...';
     let up = true;
-    
+    let rawVal = null;
+
     if (item.type === 'forex') {
       if (finansData && finansData[item.id] && finansData[item.id].Buying !== 'Hata') {
-        valueStr = '₺' + parseFloat(finansData[item.id].Buying).toFixed(2);
+        rawVal = parseFloat(finansData[item.id].Buying);
+        valueStr = '₺' + rawVal.toFixed(2);
         const ch = parseFloat(String(finansData[item.id].Change || '0').replace(',', '.')) || 0;
         up = ch >= 0;
       }
@@ -522,26 +550,82 @@ function renderWatchlist() {
       if (cryptoData) {
         const coin = cryptoData.find(c => c.symbol === item.id.toLowerCase());
         if (coin && coin.symbol !== 'Veri Yok') {
+          rawVal = coin.current_price;
           valueStr = '$' + coin.current_price.toLocaleString('en-US');
           up = coin.price_change_percentage_24h >= 0;
         }
       }
     } else if (item.type === 'bist') {
       if (bistData && bistData.price !== 'Veri Yok') {
-        valueStr = parseFloat(bistData.price).toFixed(0) + ' P';
+        rawVal = parseFloat(bistData.price);
+        valueStr = rawVal.toFixed(0) + ' P';
         up = bistData.up;
       }
     }
-    
+
+    if (rawVal !== null) checkAlarm(item.id, rawVal);
+    const alarm = alarms[item.id];
+    const alarmBadge = alarm ? `<span title="Alarm eşiği: ${alarm.threshold}" style="color:${alarm.triggered ? '#b83030' : 'var(--ink3)'}">🔔</span>` : '';
+
     h += `
       <div class="watchlist-item" style="background:var(--surface2); border:1px solid var(--border); border-radius:20px; padding:6px 14px; font-size:0.65rem; font-family:'Syne',sans-serif; display:flex; align-items:center; gap:8px; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
         <span style="font-weight:700; color:var(--fb-sari2)">${item.name}</span>
         <span class="${up ? 'up' : 'down'}" style="font-weight:600;">${valueStr}</span>
+        ${alarmBadge}
+        <button class="star-btn" style="opacity:0.6;" title="Fiyat alarmı kur" onclick="event.stopPropagation(); promptAlarm('${item.id}', '${item.name}', '${item.type}', ${rawVal !== null ? rawVal : 'null'})">⏰</button>
         <span style="cursor:pointer; color:var(--ink3); font-weight:700; margin-left:4px;" onclick="toggleWatchlist('${item.id}', '${item.name}', '${item.type}')">×</span>
       </div>
     `;
   });
   container.innerHTML = h;
+}
+
+// --- Fiyat Alarmı ---
+let alarms = JSON.parse(localStorage.getItem('news_alarms')) || {};
+
+function saveAlarms() { localStorage.setItem('news_alarms', JSON.stringify(alarms)); }
+
+function promptAlarm(id, name, type, currentVal) {
+  const existing = alarms[id];
+  const input = prompt(`${name} için fiyat alarmı eşiği girin (şu anki değer: ${currentVal}).\nBoş bırakıp Tamam'a basarsanız alarm kaldırılır.`, existing ? existing.threshold : (currentVal ?? ''));
+  if (input === null) return;
+  if (input.trim() === '') {
+    delete alarms[id];
+    saveAlarms();
+    renderWatchlist();
+    return;
+  }
+  const threshold = parseFloat(String(input).replace(',', '.'));
+  if (isNaN(threshold)) { alert('Geçerli bir sayı girin.'); return; }
+  const direction = (currentVal != null && threshold < currentVal) ? 'below' : 'above';
+  alarms[id] = { name, type, threshold, direction, triggered: false };
+  saveAlarms();
+  if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+  renderWatchlist();
+}
+
+function checkAlarm(id, currentVal) {
+  const a = alarms[id];
+  if (!a || currentVal == null || isNaN(currentVal)) return;
+  const crossed = a.direction === 'above' ? currentVal >= a.threshold : currentVal <= a.threshold;
+  if (crossed && !a.triggered) {
+    a.triggered = true;
+    saveAlarms();
+    notifyAlarm(a, currentVal);
+  } else if (!crossed && a.triggered) {
+    a.triggered = false;
+    saveAlarms();
+  }
+}
+
+function notifyAlarm(a, currentVal) {
+  const title = `🔔 ${a.name} fiyat alarmı`;
+  const body = `Değer ${a.direction === 'above' ? '≥' : '≤'} ${a.threshold} oldu (şu an ${currentVal}).`;
+  if ('Notification' in window && Notification.permission === 'granted') {
+    try { new Notification(title, { body }); } catch (e) { console.warn(title, body); }
+  } else {
+    console.log(title, body);
+  }
 }
 
 // --- Trend Çizgileri (Sparklines) Üreticisi ---
@@ -583,13 +667,13 @@ updateClock(); setInterval(updateClock, 60000);
 async function fetchBist() {
   setLd('Borsa verileri alınıyor...');
   try {
-    const res = await fetch(CORS_PROXY + encodeURIComponent(BIST_URL + '&v=' + TS));
+    const res = await proxyFetch(BIST_URL + '&v=' + TS);
     if (res.ok) {
       const data = await res.json();
       if (data && data.chart && data.chart.result && data.chart.result[0]) {
         const result = data.chart.result[0];
         const currentPrice = result.meta.regularMarketPrice;
-        const previousClose = result.meta.previousClose;
+        const previousClose = result.meta.previousClose ?? result.meta.chartPreviousClose;
         const changePercent = ((currentPrice - previousClose) / previousClose) * 100;
         bistData = { price: currentPrice.toFixed(2), change: changePercent.toFixed(2), up: changePercent >= 0 };
         renderBist();
@@ -610,6 +694,92 @@ function renderBist() {
   renderWatchlist();
 }
 
+// --- HAVA DURUMU (Open-Meteo, anahtarsız) ---
+const WEATHER_LOCATIONS = [
+  { id: 'catalca', name: 'Çatalca / İstanbul', lat: 41.1425, lon: 28.4606 },
+  { id: 'bodrum', name: 'Bodrum / Muğla', lat: 37.0344, lon: 27.4305 }
+];
+const WMO_ICON = {
+  0: '☀️', 1: '🌤', 2: '⛅', 3: '☁️', 45: '🌫', 48: '🌫',
+  51: '🌦', 53: '🌦', 55: '🌦', 61: '🌧', 63: '🌧', 65: '🌧',
+  71: '🌨', 73: '🌨', 75: '🌨', 80: '🌦', 81: '🌧', 82: '🌧',
+  95: '⛈', 96: '⛈', 99: '⛈'
+};
+function wmoIcon(code) { return WMO_ICON[code] || '🌡'; }
+
+let weatherData = null;
+async function fetchWeather() {
+  setLd('Hava durumu alınıyor...');
+  try {
+    const results = await Promise.all(WEATHER_LOCATIONS.map(async loc => {
+      try {
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=Europe%2FIstanbul`);
+        if (!res.ok) throw new Error('http');
+        const d = await res.json();
+        return { ...loc, temp: Math.round(d.current.temperature_2m), code: d.current.weather_code, max: Math.round(d.daily.temperature_2m_max[0]), min: Math.round(d.daily.temperature_2m_min[0]) };
+      } catch (e) { return { ...loc, temp: null }; }
+    }));
+    weatherData = results;
+  } catch (e) { console.error('Hava durumu hatası', e); weatherData = null; }
+  renderWeather();
+}
+function renderWeather() {
+  const elem = document.getElementById('wxM');
+  if (!elem) return;
+  if (!weatherData) { elem.innerHTML = `<div class="ir"><span class="lb">Hava durumu alınamadı</span></div>`; return; }
+  elem.innerHTML = weatherData.map(loc => {
+    if (loc.temp === null) return `<div class="ir"><span class="lb">${loc.name}</span><span class="vl" style="color:var(--ink3)">Veri Yok</span></div>`;
+    return `<div class="ir"><span class="lb">${wmoIcon(loc.code)} ${loc.name}</span><span class="vl">${loc.temp}°C <span style="color:var(--ink4);font-size:.6rem">(${loc.min}°/${loc.max}°)</span></span></div>`;
+  }).join('');
+}
+
+// --- DEPREM (Kandilli aynası, anahtarsız, CORS destekli) ---
+let depremData = null;
+async function fetchDeprem() {
+  setLd('Deprem verileri alınıyor...');
+  try {
+    const res = await fetch('https://api.orhanaydogdu.com.tr/deprem/kandilli/live?limit=8&v=' + TS);
+    if (res.ok) {
+      const d = await res.json();
+      if (d && Array.isArray(d.result)) depremData = d.result;
+    }
+  } catch (e) { console.error('Deprem hatası', e); }
+  renderDeprem();
+}
+function renderDeprem() {
+  const elem = document.getElementById('eqM');
+  if (!elem) return;
+  if (!depremData || !depremData.length) { elem.innerHTML = `<div class="ir"><span class="lb">Veri alınamadı</span></div>`; return; }
+  elem.innerHTML = depremData.slice(0, 5).map(eq => {
+    const mag = eq.mag || 0;
+    const color = mag >= 4 ? 'var(--red)' : (mag >= 3 ? '#c58a1f' : 'var(--ink3)');
+    const time = new Date(eq.date_time.replace(' ', 'T')).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+    return `<div class="ir"><span class="lb">${eq.title}</span><span class="vl" style="color:${color}">M${mag.toFixed(1)} · ${time}</span></div>`;
+  }).join('');
+}
+
+// --- YAKLAŞAN RESMİ TATİLLER (Nager.Date, CORS proxy üzerinden) ---
+let holidayData = null;
+async function fetchHolidays() {
+  setLd('Resmi tatiller alınıyor...');
+  try {
+    const res = await proxyFetch('https://date.nager.at/api/v3/NextPublicHolidays/TR?v=' + TS);
+    if (res.ok) holidayData = await res.json();
+  } catch (e) { console.error('Tatil hatası', e); }
+  renderHolidays();
+}
+function renderHolidays() {
+  const elem = document.getElementById('hdM');
+  if (!elem) return;
+  if (!holidayData || !holidayData.length) { elem.innerHTML = `<div class="ir"><span class="lb">Veri alınamadı</span></div>`; return; }
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  elem.innerHTML = holidayData.slice(0, 3).map(h => {
+    const d = new Date(h.date + 'T00:00:00');
+    const days = Math.round((d - today) / 86400000);
+    return `<div class="ir"><span class="lb">${h.localName}</span><span class="vl" style="color:var(--fb)">${days} gün</span></div>`;
+  }).join('');
+}
+
 // --- DÖVİZ KURLARI ---
 async function fetchFinans() {
   setLd('Döviz kurları alınıyor...');
@@ -627,7 +797,7 @@ async function fetchFinans() {
           let goldChange = '0';
           
           try {
-             const goldRes = await fetch(CORS_PROXY + encodeURIComponent('https://finans.truncgil.com/v4/today.json?v=' + TS));
+             const goldRes = await proxyFetch('https://finans.truncgil.com/v4/today.json?v=' + TS);
              if(goldRes.ok) {
                  const goldData = await goldRes.json();
                  if(goldData && goldData.GAU) {
@@ -725,7 +895,8 @@ function renderCrypto() {
 // --- RSS HABERLERİ ---
 async function fetchRSS(url) {
   try {
-    const response = await fetch(CORS_PROXY + encodeURIComponent(url + '?v=' + TS)); 
+    const sep = url.includes('?') ? '&' : '?';
+    const response = await proxyFetch(url + sep + 'v=' + TS);
     if (!response.ok) return [];
     const xmlText = await response.text();
 
@@ -785,11 +956,22 @@ function clean(s) { const d = document.createElement('div'); d.innerHTML = s; re
 
 async function fetchAllNews() {
   setLd('Haberler taranıyor...');
-  const promises = [];
+  const tasks = [];
   for (const [section, feeds] of Object.entries(RSS_FEEDS)) {
-    feeds.forEach(url => { promises.push(fetchRSS(url).then(n => n.map(x => ({ ...x, section })))); });
+    feeds.forEach(url => tasks.push({ url, section, source: sourceOf(url) }));
   }
-  const results = await Promise.all(promises);
+  // Ücretsiz proxy servisleri aynı anda çok istekle hız sınırına takılıyor;
+  // bu yüzden feed'leri hepsi birden değil, küçük bir havuzla sırayla çekiyoruz.
+  const results = [];
+  let idx = 0;
+  async function worker() {
+    while (idx < tasks.length) {
+      const task = tasks[idx++];
+      const items = await fetchRSS(task.url);
+      results.push(items.map(x => ({ ...x, section: task.section, source: task.source })));
+    }
+  }
+  await Promise.all(Array.from({ length: 3 }, worker));
   allNews = results.flat().filter(n => n.title.length > 5).sort((a, b) => b.date - a.date);
   
   if (!allNews.length) {
@@ -803,12 +985,12 @@ function renderNews() {
   if (main) {
     document.getElementById('ht').textContent = main.title;
     document.getElementById('hd').textContent = main.desc;
-    document.getElementById('hm2').textContent = fmtDate(main.date);
+    document.getElementById('hm2').textContent = (main.source || '') + ' · ' + fmtDate(main.date);
     document.getElementById('hm').onclick = () => window.open(main.link, '_blank');
   }
 
   const side = allNews.slice(1, 4);
-  document.getElementById('hs').innerHTML = side.map(n => `<div class="hsc" onclick="window.open('${n.link}','_blank')"><h3>${n.title}</h3><div class="mt">${fmtDate(n.date)}</div></div>`).join('');
+  document.getElementById('hs').innerHTML = side.map(n => `<div class="hsc" onclick="window.open('${n.link}','_blank')"><h3>${n.title}</h3><div class="mt">${n.source || ''} · ${fmtDate(n.date)}</div></div>`).join('');
   
   renderSec('tN', allNews.filter(n => n.section === 'turkey').slice(0, 4), 'turkey');
   renderSec('wN', allNews.filter(n => n.section === 'world').slice(0, 4), 'world');
@@ -826,7 +1008,7 @@ function renderSec(id, news, sec) {
   if (!elem) return;
   const bgs = { turkey: '#1F306510', world: '#2a5c8a10', tech: '#b8942a10', spor: '#6b422610' };
   const cls = { turkey: '#1F3065', world: '#2a5c8a', tech: '#b8942a', spor: '#6b4226' };
-  elem.innerHTML = news.map(n => `<div class="nc" onclick="window.open('${n.link}','_blank')"><div class="nc-img" style="background:${bgs[sec]};color:${cls[sec]}">📰</div><div class="nc-b"><h3>${n.title}</h3><div class="mt"><span>${fmtDate(n.date)}</span></div></div></div>`).join('');
+  elem.innerHTML = news.map(n => `<div class="nc" onclick="window.open('${n.link}','_blank')"><div class="nc-img" style="background:${bgs[sec]};color:${cls[sec]}">📰</div><div class="nc-b"><h3>${n.title}</h3><div class="mt"><span>${n.source || ''}</span><span>${fmtDate(n.date)}</span></div></div></div>`).join('');
 }
 
 function renderTimeline() { document.getElementById('tl').innerHTML = allNews.slice(0, 6).map(n => `<div class="tl-i"><div class="tl-t">${fmtDate(n.date)}</div><h4>${n.title}</h4></div>`).join(''); }
@@ -914,7 +1096,7 @@ async function initAll() {
   try {
     renderWatchlist();
     const maxWaitTimer = new Promise(resolve => setTimeout(resolve, 5000));
-    const apiRequests = Promise.allSettled([fetchBist(), fetchFinans(), fetchCrypto(), fetchAllNews()]);
+    const apiRequests = Promise.allSettled([fetchBist(), fetchFinans(), fetchCrypto(), fetchAllNews(), fetchWeather(), fetchDeprem(), fetchHolidays()]);
     await Promise.race([apiRequests, maxWaitTimer]);
   } catch (e) { console.error("Init Error", e); } 
   finally { 
@@ -925,7 +1107,7 @@ async function initAll() {
 
 async function refreshAll() {
   const b = document.getElementById('rb'); b.classList.add('sp');
-  await Promise.allSettled([fetchBist(), fetchFinans(), fetchCrypto(), fetchAllNews()]);
+  await Promise.allSettled([fetchBist(), fetchFinans(), fetchCrypto(), fetchAllNews(), fetchWeather(), fetchDeprem(), fetchHolidays()]);
   setTimeout(() => b.classList.remove('sp'), 1000);
 }
 
