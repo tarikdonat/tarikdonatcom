@@ -5,15 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tarık Donat | Dostcam & Dostglass — Endüstriyel Cam Çözümleri</title>
 <meta name="description" content="Dostcam Cam A.Ş. ve Dostglass markası — 1989'dan bu yana Çatalca/İstanbul'da endüstriyel temperli cam üretimi. 3 nesil aile şirketi, 800 m²/gün kapasite, ±0.1mm lazer kesim hassasiyeti. İhracat: İtalya, Hollanda, Almanya.">
-<link rel="canonical" href="https://www.tarikdonat.com/vitrin.html">
+<link rel="canonical" href="https://tarikdonat.com/vitrin.html">
 <meta name="robots" content="index, follow">
 
 <meta property="og:type" content="profile">
 <meta property="og:title" content="Tarık Donat | Dostcam & Dostglass">
 <meta property="og:description" content="Endüstriyel temperli cam üretimi, ihracat ve dijital sistemler — 1989'dan bu yana.">
-<meta property="og:url" content="https://www.tarikdonat.com/vitrin.html">
+<meta property="og:url" content="https://tarikdonat.com/vitrin.html">
 <meta property="og:locale" content="tr_TR">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://tarikdonat.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://tarikdonat.com/og-image.png">
 <meta name="twitter:title" content="Tarık Donat | Dostcam & Dostglass">
 <meta name="twitter:description" content="Endüstriyel temperli cam üretimi, ihracat ve dijital sistemler.">
 
@@ -29,18 +33,22 @@
 :root{
 --fb:#1F3065; --fb-koyu:#0d1a3a; --fb-sari:#FFED00;
 --bg:#f5f0e8; --surface: rgba(255, 253, 248, 0.7);
---ink:#1a1612; --ink2:#4a4035; --ink3:#8a7e70;
+--ink:#1a1612; --ink2:#4a4035; --ink3:#6b6054;
+--accent:#1F3065; --on-accent:#FFED00;
+color-scheme: light;
 --border: rgba(216, 208, 194, 0.6);
 --shadow: rgba(0, 0, 0, 0.02);
 --shadow-hover: rgba(31, 48, 101, 0.1);
 --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 body.dark {
+color-scheme: dark;
+--accent:#FFED00; --on-accent:#0d1a3a;
 --bg: #0d121f;
 --surface: rgba(18, 26, 47, 0.7);
 --ink: #f5f0e8;
 --ink2: #b5aa98;
---ink3: #8a7e70;
+--ink3: #a99d8b;
 --border: rgba(255, 255, 255, 0.08);
 --shadow: rgba(0, 0, 0, 0.2);
 --shadow-hover: rgba(255, 237, 0, 0.05);
@@ -103,7 +111,7 @@ body.dark h1 span { text-shadow: 2px 2px 0 #000; }
 font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 1px; color: var(--ink3);
 margin-top: 18px; text-transform: uppercase;
 }
-.section { padding: 80px 0; border-bottom: 1px solid var(--border); }
+.section { padding: 80px 0; border-bottom: 1px solid var(--border); scroll-margin-top: 60px; }
 .section:last-child { border-bottom: none; }
 .sec-title {
 font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; letter-spacing: 2px;
@@ -127,11 +135,11 @@ body.dark .stat-box .num { color: var(--fb-sari); }
 .tag {
 background: var(--surface); backdrop-filter: blur(5px); border: 1px solid var(--border);
 padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-family: 'Syne', sans-serif;
-color: var(--ink2); transition: all 0.3s; cursor: pointer;
+color: var(--ink2); transition: all 0.3s; cursor: pointer; min-height: 44px; line-height: 1.4;
 }
 .tag:hover { border-color: var(--fb); background: var(--fb); color: var(--fb-sari); transform: translateY(-2px); }
 body.dark .tag:hover { border-color: var(--fb-sari); background: var(--fb-sari); color: var(--fb-koyu); }
-.projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+.projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 30px; }
 .card {
 background: var(--surface); backdrop-filter: blur(10px); border: 1px solid var(--border);
 border-radius: 16px; padding: 35px; transition: var(--transition); position: relative;
@@ -176,8 +184,34 @@ color: var(--ink); border-radius: 10px; font-family: 'DM Mono', monospace;
 font-size: 0.9rem; transition: all 0.3s;
 }
 body.dark .calc-input { background: #0d121f; border-color: var(--border); color: #f5f0e8; }
-.calc-input:focus { outline: none; border-color: var(--fb); box-shadow: 0 0 0 3px rgba(31, 48, 101, 0.1); }
-body.dark .calc-input:focus { border-color: var(--fb-sari); box-shadow: 0 0 0 3px rgba(255, 237, 0, 0.1); }
+.calc-input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+.calc-input[aria-invalid="true"] { border-color: #c0392b; }
+body.dark .calc-input[aria-invalid="true"] { border-color: #ff8a7a; }
+.calc-input::placeholder { color: var(--ink3); opacity: 1; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.skip-link { position: absolute; left: 16px; top: -60px; z-index: 11000; background: var(--accent); color: var(--on-accent); padding: 12px 16px; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.8rem; text-decoration: none; }
+.skip-link:focus { top: 16px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.calc-error { font-size: 0.78rem; color: #c0392b; margin-top: 4px; line-height: 1.5; font-family: 'Syne', sans-serif; font-weight: 600; }
+body.dark .calc-error { color: #ff8a7a; }
+.calc-actions { margin-top: 18px; }
+.accent-text { color: var(--accent); }
+.map-box { position: relative; width: 100%; height: 100%; }
+.map-box iframe { border: 0; width: 100%; height: 100%; display: block; filter: saturate(0.85); }
+body.dark .map-box iframe { filter: saturate(0.8) brightness(0.85); }
+.map-placeholder {
+width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+gap: 12px; padding: 24px; text-align: center;
+background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+background-size: 40px 40px;
+}
+.map-placeholder .map-pin { font-size: 2rem; line-height: 1; }
+.map-placeholder p { font-size: 0.78rem; color: var(--ink2); line-height: 1.6; max-width: 34ch; }
+.map-placeholder .map-links { font-size: 0.78rem; }
+.map-placeholder .map-links a { color: var(--accent); font-weight: 600; display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; }
+.field-hint, .modal .field-hint, .about-text .field-hint { font-size: 0.72rem; color: var(--ink3); margin-top: 6px; margin-bottom: 0; line-height: 1.5; }
+.mail-fallback, .modal .mail-fallback { font-size: 0.8rem; color: var(--ink2); margin-top: 12px; }
+.mail-fallback a { color: var(--accent); font-weight: 600; }
 .calc-results {
 display: flex; flex-direction: column; justify-content: space-between;
 background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border); border-radius: 12px; padding: 24px;
@@ -186,7 +220,7 @@ body.dark .calc-results { background: rgba(13, 18, 31, 0.4); }
 .result-box { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
 .result-box:last-child { border-bottom: none; }
 .result-label { display: block; font-size: 0.7rem; font-family: 'Syne', sans-serif; font-weight: 600; text-transform: uppercase; color: var(--ink3); margin-bottom: 4px; }
-.result-value { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--fb); }
+.result-value { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--fb); overflow-wrap: anywhere; }
 body.dark .result-value { color: var(--fb-sari); }
 .result-note { font-size: 0.65rem; line-height: 1.4; color: var(--ink3); margin-top: 15px; }
 .modal {
@@ -201,10 +235,11 @@ max-width: 500px; padding: 35px; position: relative; box-shadow: 0 20px 50px rgb
 transform: scale(0.9); transition: transform 0.3s ease; max-height: 85vh; overflow-y: auto;
 }
 .modal.open .modal-content { transform: scale(1); }
-.close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.8rem; cursor: pointer; color: var(--ink3); transition: color 0.3s; }
+.close-btn { position: absolute; top: 10px; right: 12px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: none; border: none; border-radius: 50%; font-size: 1.8rem; line-height: 1; cursor: pointer; color: var(--ink2); transition: color 0.3s; }
 .close-btn:hover { color: var(--fb); }
 body.dark .close-btn:hover { color: var(--fb-sari); }
-.modal h3 { font-family: 'Syne', sans-serif; font-size: 1.5rem; color: var(--fb); margin-bottom: 15px; }
+.modal-content:focus { outline: none; }
+.modal h3 { font-family: 'Syne', sans-serif; font-size: 1.5rem; color: var(--fb); margin-bottom: 15px; padding-right: 40px; }
 body.dark .modal h3 { color: var(--fb-sari); }
 .modal p { font-size: 0.95rem; line-height: 1.6; color: var(--ink2); }
 .modal ul { margin-top: 15px; margin-left: 20px; font-size: 0.9rem; color: var(--ink2); }
@@ -219,7 +254,6 @@ transition: var(--transition); position: relative;
 body.dark .glass-artwork-container:hover { border-color: var(--fb-sari); }
 .glass-artwork { transition: transform 0.5s ease; }
 .glass-artwork-container:hover .glass-artwork { transform: scale(1.03); }
-.notify-form-container { margin-top: 15px; }
 .notify-msg-success { animation: fadeIn 0.4s ease forwards; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 .click-particle {
@@ -229,7 +263,8 @@ animation: particleExplode 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
 }
 body.dark .click-particle { border-color: var(--fb-sari); }
 @keyframes particleExplode { to { transform: translate(-50%, -50%) scale(4.5); opacity: 0; } }
-footer { padding: 60px 0; text-align: center; background: var(--fb-koyu); color: var(--bg); font-family: 'Syne', sans-serif; }
+footer { padding: 60px 0; text-align: center; background: var(--fb-koyu); color: #f5f0e8; font-family: 'Syne', sans-serif; border-top: 1px solid rgba(255,255,255,0.1); }
+footer :focus-visible { outline-color: var(--fb-sari); }
 .footer-links a { color: var(--fb-sari); text-decoration: none; margin: 0 15px; font-size: 1rem; transition: opacity 0.3s; }
 .footer-links a:hover { opacity: 0.8; text-decoration: underline; }
 .footer-contact { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-bottom: 45px; }
@@ -237,7 +272,7 @@ footer { padding: 60px 0; text-align: center; background: var(--fb-koyu); color:
 display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.07);
 border: 1px solid rgba(255,237,0,0.35); color: var(--fb-sari); text-decoration: none;
 padding: 13px 24px; border-radius: 40px; font-size: 0.9rem; font-weight: 700;
-transition: all 0.3s;
+transition: all 0.3s; font-family: inherit; cursor: pointer; min-height: 44px;
 }
 .contact-pill:hover { background: var(--fb-sari); color: var(--fb-koyu); transform: translateY(-3px); }
 .footer-cols {
@@ -249,7 +284,7 @@ font-size: 0.8rem; letter-spacing: 1.5px; text-transform: uppercase;
 color: var(--fb-sari); margin-bottom: 12px; font-weight: 700;
 }
 .footer-col p { font-family: 'DM Mono', monospace; font-size: 0.8rem; line-height: 1.9; opacity: 0.8; }
-.footer-col a { color: var(--bg); text-decoration: none; transition: color 0.3s; }
+.footer-col a { color: #f5f0e8; text-decoration: none; transition: color 0.3s; display: inline-block; padding: 2px 0; }
 .footer-col a:hover { color: var(--fb-sari); }
 @media(max-width: 768px) {
 .about-grid { grid-template-columns: 1fr; }
@@ -258,13 +293,23 @@ color: var(--fb-sari); margin-bottom: 12px; font-weight: 700;
 .stat-box .num { font-size: 1.2rem; }
 .footer-cols { grid-template-columns: 1fr; gap: 28px; text-align: center; }
 .contact-pill { width: 100%; justify-content: center; }
-.back-link { padding: 8px 14px; font-size: 0.7rem; }
+.back-link { padding: 12px 16px; font-size: 0.7rem; min-height: 44px; display: inline-flex; align-items: center; }
 header { padding: 100px 0 60px; }
+.section { padding: 56px 0; }
+.card { padding: 26px; }
+.calculator-grid { padding: 20px; }
+.calc-results { padding: 18px; }
+.modal-content { padding: 28px 22px; }
+.calc-input { font-size: 16px; }
+.btn { min-height: 44px; }
+.footer-col a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; }
+.sec-title { margin-bottom: 28px; }
 }
 @media(max-width: 480px) {
-.notify-form-container input#notifyEmail { width: 100% !important; display: block !important; margin-bottom: 10px !important; }
-.notify-form-container button[type="submit"] { width: 100% !important; float: none !important; }
+.about-text .btn, .section .btn { white-space: normal; text-align: center; justify-content: center; }
+.cta-row .btn { width: 100%; }
 }
+.cta-row { margin-top: 28px; display: flex; gap: 14px; flex-wrap: wrap; }
 @media (prefers-reduced-motion: reduce) {
 * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
@@ -272,22 +317,48 @@ header { padding: 100px 0 60px; }
 <script type="application/ld+json">
 {
 "@context": "https://schema.org",
+"@graph": [
+{
 "@type": "Organization",
+"@id": "https://tarikdonat.com/#dostcam",
 "name": "Dostcam Cam A.Ş.",
 "alternateName": "Dostglass",
-"employee": { "@type": "Person", "name": "Tarık Donat", "jobTitle": "Yönetici" },
 "foundingDate": "1989",
-"url": "https://www.tarikdonat.com/vitrin.html",
+"url": "https://www.dostcam.net",
 "sameAs": ["https://www.dostcam.net"],
-"address": { "@type": "PostalAddress", "addressLocality": "Çatalca / İstanbul", "addressCountry": "TR" },
-"description": "Endüstriyel temperli cam üretimi: duşakabin, aydınlatma, mobilya ve elektrik panosu camları."
+"address": { "@type": "PostalAddress", "streetAddress": "Elbasan Mahallesi No: 83", "postalCode": "34530", "addressLocality": "Çatalca", "addressRegion": "İstanbul", "addressCountry": "TR" },
+"description": "Endüstriyel temperli cam üretimi: duşakabin, aydınlatma, mobilya ve elektrik panosu camları.",
+"employee": { "@id": "https://tarikdonat.com/#tarik" }
+},
+{
+"@type": "Person",
+"@id": "https://tarikdonat.com/#tarik",
+"name": "Tarık Donat",
+"jobTitle": "Yönetici",
+"sameAs": ["https://www.linkedin.com/in/tar%C4%B1k-donat-7165251b"]
+},
+{
+"@type": "LocalBusiness",
+"@id": "https://tarikdonat.com/#bodrum",
+"name": "Dostglass Bodrum Satış Noktası",
+"url": "https://tarikdonat.com/vitrin.html#bodrum",
+"telephone": "+905326253787",
+"openingHoursSpecification": { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], "opens": "10:00", "closes": "18:00" },
+"description": "Ticari cam satış noktası; Pazartesi–Cumartesi 10:00–18:00 açık. Aynı adreste BER Yapı: alüminyum profil, sineklik profili, kompozit panel.",
+"address": { "@type": "PostalAddress", "streetAddress": "Konacık Mah. Gazderesi Cad. Kale İş Merkezi No:4 C16", "addressLocality": "Bodrum", "addressRegion": "Muğla", "addressCountry": "TR" }
+}
+]
 }
 </script>
 </head>
 <body>
+<script>
+(function(){try{var t=localStorage.getItem('theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.body.classList.add('dark');}catch(e){}})();
+</script>
+<a href="#main" class="skip-link">İçeriğe geç</a>
 <div class="interactive-glow" id="glow"></div>
 <a href="index.html" class="back-link">← Portal</a>
-<button class="theme-toggle" id="themeToggle" aria-label="Tema Değiştir">🌙</button>
+<button type="button" class="theme-toggle" id="themeToggle" aria-label="Koyu temaya geç" aria-pressed="false">🌙</button>
 
 <header>
 <div class="container">
@@ -298,14 +369,14 @@ header { padding: 100px 0 60px; }
 </div>
 </header>
 
-<main class="container">
+<main class="container" id="main" tabindex="-1">
 <section class="section">
-<div class="sec-title">Hakkımda & Uzmanlık</div>
+<h2 class="sec-title">Hakkımda & Uzmanlık</h2>
 <div class="about-grid">
 <div class="about-text">
 <p>Merhaba, ben Tarık Donat. <strong>Dostcam Cam Anonim Şirketi</strong> ve <strong>Dostglass Cam Limited Şirketi</strong>'nde yönetici olarak görev yapıyorum; 1989'dan bu yana, <strong>3 nesildir süren bir aile şirketi</strong> olarak Çatalca/İstanbul'daki fabrikamızda endüstriyel temperli cam üretiyoruz.</p>
 <p>Odağımız mimari değil, tamamen <strong>endüstriyel sektörlerin</strong> ihtiyaçlarına yönelik nitelikli cam üretim süreçleri: duşakabin, aydınlatma, mobilya ve elektrik panosu camları. Üretimimizin önemli bir bölümünü <strong>İtalya, Hollanda ve Almanya</strong>'ya ihraç ediyor, aynı zamanda yurt içi pazara da hizmet veriyoruz.</p>
-<p>Yeni bir adım olarak <strong>Bodrum</strong>'da bir ticari cam satış noktası hayata geçiriyoruz; alüminyum doğrama firmaları, duşakabin şirketleri, mimarlar ve inşaat projelerine yönelik hizmet verecek. Aynı noktada kardeş firmamız <strong>BER Yapı</strong> alüminyum profil, sineklik profili ve kompozit panel satışı yapacak.</p>
+<p>Yeni bir adım olarak <strong>Bodrum</strong>'da bir ticari cam satış noktası açtık; alüminyum doğrama firmaları, duşakabin şirketleri, mimarlar ve inşaat projelerine yönelik hizmet veriyor. Aynı noktada kardeş firmamız <strong>BER Yapı</strong> alüminyum profil, sineklik profili ve kompozit panel satışı yapıyor.</p>
 <p>Bunun yanında şirket içi operasyonları hızlandırmak amacıyla web tabanlı veri görselleştirme, sipariş takip dashboard'ları ve otomasyon sistemleri geliştiriyorum.</p>
 <div class="stats-row">
 <div class="stat-box"><span class="num">1989</span><span class="lbl">Kuruluş</span></div>
@@ -316,15 +387,15 @@ header { padding: 100px 0 60px; }
 <div class="stat-box"><span class="num">3</span><span class="lbl">İhracat Ülkesi</span></div>
 </div>
 <div class="expertise-tags">
-<span class="tag" onclick="openExpertModal('dusakabin')">Duşakabin Camları</span>
-<span class="tag" onclick="openExpertModal('aydinlatma')">Aydınlatma Camları</span>
-<span class="tag" onclick="openExpertModal('mobilya')">Mobilya Camları</span>
-<span class="tag" onclick="openExpertModal('pano')">Elektrik Panosu Camları</span>
+<button type="button" class="tag" aria-haspopup="dialog" onclick="openExpertModal('dusakabin')">Duşakabin Camları</button>
+<button type="button" class="tag" aria-haspopup="dialog" onclick="openExpertModal('aydinlatma')">Aydınlatma Camları</button>
+<button type="button" class="tag" aria-haspopup="dialog" onclick="openExpertModal('mobilya')">Mobilya Camları</button>
+<button type="button" class="tag" aria-haspopup="dialog" onclick="openExpertModal('pano')">Elektrik Panosu Camları</button>
 </div>
 </div>
 <div>
 <div class="glass-artwork-container">
-<svg viewBox="0 0 400 320" width="100%" height="100%" class="glass-artwork" role="img" aria-label="Cam kırılma ve ışık yansıması animasyonu">
+<svg viewBox="0 0 400 320" width="100%" height="100%" class="glass-artwork" id="glassArt" role="img" aria-label="Cam kırılma ve ışık yansıması animasyonu">
 <defs>
 <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
 <stop offset="0%" stop-color="rgba(255,255,255,0.4)" />
@@ -355,7 +426,7 @@ header { padding: 100px 0 60px; }
 <animate attributeName="stroke-dasharray" values="0,1000;1000,0;0,1000" dur="4s" repeatCount="indefinite" />
 </path>
 <path d="M 160 160 L 400 130" stroke="#FFED00" stroke-width="1.5" opacity="0.6" stroke-dasharray="4,4" fill="none" />
-<polygon points="120,220 200,80 280,220" fill="url(#glassGrad)" stroke="var(--fb)" stroke-width="2" style="backdrop-filter: blur(5px);" />
+<polygon points="120,220 200,80 280,220" fill="url(#glassGrad)" stroke="var(--accent)" stroke-width="2" style="backdrop-filter: blur(5px);" />
 <line x1="120" y1="220" x2="280" y2="220" stroke="var(--fb-sari)" stroke-width="3" />
 <circle cx="160" cy="160" r="6" fill="#FFED00" filter="url(#glowFilter)">
 <animate attributeName="r" values="4;8;4" dur="2s" repeatCount="indefinite" />
@@ -369,86 +440,83 @@ header { padding: 100px 0 60px; }
 </div>
 </section>
 
-<section class="section">
-<div class="sec-title">Endüstriyel Cam Hesaplayıcı (B2B)</div>
+<section class="section" id="hesaplayici">
+<h2 class="sec-title">Endüstriyel Cam Hesaplayıcı (B2B)</h2>
 <p style="margin-bottom: 25px; font-size: 0.9rem; color: var(--ink2)">
-Projelerinizde kullanacağınız endüstriyel camların ağırlık ve hacim değerlerini pratik şekilde hesaplayın.
+Projelerinizde kullanacağınız endüstriyel camların ağırlık ve alan değerlerini pratik şekilde hesaplayın.
 </p>
 <div class="calculator-grid">
 <div class="calc-inputs">
 <div class="form-group">
 <label for="glassType">Cam Tipi</label>
 <select id="glassType" class="calc-input" onchange="calculateGlass()">
-<option value="dusakabin" data-density="2.5" data-u="5.7">Duşakabin Camı (Temperli)</option>
-<option value="aydinlatma" data-density="2.45" data-u="5.8">Aydınlatma Camı (Borosilikat)</option>
-<option value="mobilya" data-density="2.5" data-u="5.7">Mobilya Camı (Flotal/Düz)</option>
-<option value="pano" data-density="2.5" data-u="5.6">Elektrik Panosu Camı (Robax/Seramik)</option>
+<option value="dusakabin" data-density="2.5">Duşakabin Camı (Temperli)</option>
+<option value="aydinlatma" data-density="2.23">Aydınlatma Camı (Borosilikat)</option>
+<option value="mobilya" data-density="2.5">Mobilya Camı (Flotal/Düz)</option>
+<option value="pano" data-density="2.5">Elektrik Panosu Camı (Robax/Seramik)</option>
 </select>
 </div>
 <div class="form-row">
 <div class="form-group">
 <label for="width">En (mm)</label>
-<input type="number" id="width" class="calc-input" value="1000" min="10" max="5000" inputmode="numeric" oninput="calculateGlass()">
+<input type="number" id="width" class="calc-input" value="1000" min="10" max="5000" step="1" inputmode="numeric" aria-describedby="calcError" oninput="calculateGlass()">
 </div>
 <div class="form-group">
 <label for="height">Boy (mm)</label>
-<input type="number" id="height" class="calc-input" value="2000" min="10" max="5000" inputmode="numeric" oninput="calculateGlass()">
+<input type="number" id="height" class="calc-input" value="2000" min="10" max="5000" step="1" inputmode="numeric" aria-describedby="calcError" oninput="calculateGlass()">
 </div>
 </div>
 <div class="form-group">
 <label for="thickness">Kalınlık (mm)</label>
 <select id="thickness" class="calc-input" onchange="calculateGlass()">
+<option value="3">3 mm</option>
 <option value="4">4 mm</option>
 <option value="5">5 mm</option>
 <option value="6" selected>6 mm</option>
 <option value="8">8 mm</option>
 <option value="10">10 mm</option>
 <option value="12">12 mm</option>
+<option value="15">15 mm</option>
+<option value="19">19 mm</option>
 </select>
 </div>
 <div class="form-group">
 <label for="quantity">Adet</label>
-<input type="number" id="quantity" class="calc-input" value="1" min="1" inputmode="numeric" oninput="calculateGlass()">
+<input type="number" id="quantity" class="calc-input" value="1" min="1" max="10000" step="1" inputmode="numeric" aria-describedby="calcError" oninput="calculateGlass()">
 </div>
+<p id="calcError" class="calc-error" hidden></p>
 </div>
-<div class="calc-results">
+<div class="calc-results" role="region" aria-label="Hesaplama sonuçları">
+<div>
 <div class="result-box">
 <span class="result-label">Toplam Ağırlık</span>
-<span class="result-value" id="resWeight">30.00 kg</span>
+<span class="result-value" id="resWeight">30,00 kg</span>
+</div>
+<div class="result-box">
+<span class="result-label">Adet Başı Ağırlık</span>
+<span class="result-value" id="resUnitWeight">30,00 kg</span>
 </div>
 <div class="result-box">
 <span class="result-label">Toplam Alan</span>
-<span class="result-value" id="resArea">2.00 m²</span>
+<span class="result-value" id="resArea">2,00 m²</span>
 </div>
 <div class="result-box">
-<span class="result-label">Tahmini Isı İletimi (U-Değeri)</span>
-<span class="result-value" id="resU">5.7 W/m²K</span>
+<span class="result-label">Yaklaşık U-Değeri (tek kat cam)</span>
+<span class="result-value" id="resU">≈ 5,7 W/m²K</span>
+</div>
 </div>
 <div class="result-note">
-* Yoğunluk ve teknik değerler standart formüllerle hesaplanmıştır.
-Büyük ölçekli projeleriniz için lütfen Dostcam ekibiyle iletişime geçin.
+* Ağırlık = alan × kalınlık × yoğunluk (düz/temperli cam ≈ 2,5 kg/m² her mm için; borosilikat ≈ 2,23). Ölçüler anma ölçüsüdür; kenar işleme ve fire dahil değildir. U-değeri tek kat cam için yaklaşık bir referanstır (kalınlığa göre az değişir). Kesin ürün ve büyük ölçekli projeler için Dostcam ekibiyle iletişime geçin.
+<div class="calc-actions"><button type="button" class="btn btn-outline" id="calcQuoteBtn" onclick="openQuoteFromCalc()">📝 Bu Ölçü İçin Teklif İste</button></div>
 </div>
+<p class="sr-only" id="calcLive" role="status" aria-live="polite" aria-atomic="true"></p>
 </div>
 </div>
 </section>
 
 <section class="section">
-<div class="sec-title">Güncel Projeler & Sistemler</div>
+<h2 class="sec-title">Güncel Projeler & Sistemler</h2>
 <div class="projects-grid">
-<div class="card">
-<div class="card-type">Yayın / E-Kitap</div>
-<h3>Endüstriyel Cam Üretimi: Teknik Rehber</h3>
-<p>Üretim hattı verimliliği, yangın analizleri ve global kalite standartları üzerine hazırlamakta olduğum kapsamlı sektörel e-kitap projesi.</p>
-<div class="notify-form-container">
-<form id="notifyForm" onsubmit="handleNotifySubmit(event)">
-<input type="email" id="notifyEmail" placeholder="E-posta adresiniz" required class="calc-input" style="padding:8px 12px; font-size:0.75rem; border-radius:20px; width:calc(100% - 110px); display:inline-block; margin-bottom:0;">
-<button type="submit" class="btn btn-primary" style="padding:8px 16px; font-size:0.7rem; border-radius:20px; width:100px; display:inline-block; float:right;">Kaydol</button>
-</form>
-<div id="notifyMessage" class="notify-msg-success" style="display:none; font-size:0.75rem; color:var(--fb); margin-top:8px; font-family:'Syne',sans-serif; font-weight:700;">
-✔ Başarıyla kaydoldunuz! E-kitap çıktığında bilgilendirileceksiniz.
-</div>
-</div>
-</div>
 
 <div class="card">
 <div class="card-type">Web Geliştirme / API</div>
@@ -467,34 +535,44 @@ Büyük ölçekli projeleriniz için lütfen Dostcam ekibiyle iletişime geçin.
 </section>
 
 <section class="section" id="bodrum">
-<div class="sec-title">Yeni · Bodrum Satış Noktası</div>
+<h2 class="sec-title">Yeni · Bodrum Satış Noktası</h2>
 <div class="about-grid">
 <div class="about-text">
-<p>Bodrum'da <strong>Konacık</strong>'ta hayata geçirdiğimiz yeni ticari cam satış noktamızla, yarımadadaki inşaat ve dekorasyon sektörüne doğrudan hizmet vermeye başlıyoruz. Nokta; <strong>alüminyum doğrama firmaları</strong>, <strong>duşakabin şirketleri</strong>, <strong>mimarlar</strong> ve <strong>inşaat projeleri</strong> için hızlı tedarik ve teknik danışmanlık sağlayacak.</p>
-<p>Aynı adreste kardeş firmamız <strong>BER Yapı</strong>, alüminyum profil, sineklik profili ve kompozit panel satışı ile hizmet verecek — böylece bölgedeki yapı ustaları ve firmalar tek noktadan cam ve doğrama malzemesi tedarik edebilecek.</p>
+<p>Dostglass olarak Bodrum <strong>Konacık</strong>'ta kurduğumuz yeni ticari cam satış noktası, yarımadadaki inşaat ve dekorasyon sektörüne doğrudan hizmet veriyor. Nokta; <strong>alüminyum doğrama firmaları</strong>, <strong>duşakabin şirketleri</strong>, <strong>mimarlar</strong> ve <strong>inşaat projeleri</strong> için hızlı tedarik ve teknik danışmanlık sağlıyor.</p>
+<p>Aynı adreste kardeş firmamız <strong>BER Yapı</strong> alüminyum profil, sineklik profili ve kompozit panel satışı yapıyor. Böylece bölgedeki yapı ustaları ve firmalar cam ve doğrama malzemesini tek noktadan temin edebiliyor.</p>
 <div class="expertise-tags">
-<span class="tag">Cam Satışı</span>
-<span class="tag">Alüminyum Profil</span>
-<span class="tag">Sineklik Profili</span>
-<span class="tag">Kompozit Panel</span>
+<button type="button" class="tag" aria-haspopup="dialog" onclick="openContactModal(event,'bodrum-cam')">Cam Satışı</button>
+<button type="button" class="tag" aria-haspopup="dialog" onclick="openContactModal(event,'bodrum-ber')">Alüminyum Profil</button>
+<button type="button" class="tag" aria-haspopup="dialog" onclick="openContactModal(event,'bodrum-ber')">Sineklik Profili</button>
+<button type="button" class="tag" aria-haspopup="dialog" onclick="openContactModal(event,'bodrum-ber')">Kompozit Panel</button>
 </div>
-<div style="margin-top:28px; display:flex; gap:14px; flex-wrap:wrap;">
-<a class="btn btn-primary" href="https://www.google.com/maps/search/?api=1&query=Kale+İş+Merkezi+Konacık+Gazderesi+Cad.+Bodrum" target="_blank" rel="noopener">📍 Yol Tarifi Al</a>
-<a class="btn btn-outline" href="#" onclick="openContactModal(event)">📝 Bodrum Noktası İçin Teklif İste</a>
+<p class="field-hint">Bir başlığı seçerek ilgili konuda teklif isteyebilirsiniz.</p>
+<div class="cta-row">
+<a class="btn btn-primary" href="https://www.google.com/maps/dir/?api=1&destination=Kale+%C4%B0%C5%9F+Merkezi+Konac%C4%B1k+Gazderesi+Cad.+Bodrum" target="_blank" rel="noopener">📍 Yol Tarifi Al ↗</a>
+<button type="button" class="btn btn-outline" aria-haspopup="dialog" onclick="openContactModal(event,'bodrum-cam')">📝 Bodrum Noktası İçin Teklif İste</button>
+<a class="btn btn-outline" href="tel:+905326253787">📞 0532 625 37 87</a>
+<a class="btn btn-outline" href="https://wa.me/905326253787" target="_blank" rel="noopener">💬 WhatsApp ↗</a>
 </div>
 </div>
 <div>
-<div class="glass-artwork-container" style="height:320px; padding:0;">
-<iframe
-src="https://www.google.com/maps?q=Kale+İş+Merkezi+Konacık+Gazderesi+Cad.+Bodrum+Muğla&output=embed"
-width="100%" height="100%" style="border:0; filter: saturate(0.85);"
-loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-title="Bodrum Satış Noktası Konumu">
-</iframe>
+<div class="glass-artwork-container" style="height:360px; padding:0;">
+<div class="map-box" id="mapBox">
+<div class="map-placeholder">
+<div class="map-pin" aria-hidden="true">📍</div>
+<strong class="accent-text" style="font-family:'Syne',sans-serif; font-size:0.95rem;">Kale İş Merkezi · Konacık, Bodrum</strong>
+<p>Harita siz isteyene kadar yüklenmez. Yüklediğinizde Google Haritalar ile bağlantı kurulur.</p>
+<button type="button" class="btn btn-primary" id="mapLoadBtn" onclick="loadMap()">🗺️ Haritayı Yükle</button>
+<div class="map-links"><a href="https://www.google.com/maps/search/?api=1&query=Kale+%C4%B0%C5%9F+Merkezi+Konac%C4%B1k+Gazderesi+Cad.+Bodrum" target="_blank" rel="noopener">Google Haritalar'da aç ↗</a></div>
+</div>
+</div>
 </div>
 <div class="stat-box" style="margin-top:16px; text-align:left; padding:16px 18px;">
 <span class="lbl" style="display:block; margin-bottom:6px;">Adres</span>
-<span style="font-size:0.85rem; color:var(--ink2); line-height:1.6;">Konacık Mah. Gazderesi Cad.<br>Kale İş Merkezi No:4 C16<br>Bodrum / Muğla</span>
+<address style="font-style:normal; font-size:0.85rem; color:var(--ink2); line-height:1.6;">Konacık Mah. Gazderesi Cad.<br>Kale İş Merkezi No:4 C16<br>Bodrum / Muğla</address>
+<span class="lbl" style="display:block; margin:14px 0 6px;">Çalışma Saatleri</span>
+<span style="font-size:0.85rem; color:var(--ink2); line-height:1.6;">Pazartesi – Cumartesi<br>10:00 – 18:00</span>
+<span class="lbl" style="display:block; margin:14px 0 6px;">Telefon</span>
+<a href="tel:+905326253787" style="font-size:0.85rem; color:var(--ink2); line-height:1.6;">0532 625 37 87</a>
 </div>
 </div>
 </div>
@@ -508,7 +586,7 @@ title="Bodrum Satış Noktası Konumu">
 
 <div class="footer-contact">
 <a class="contact-pill" href="mailto:tarik@dostcam.net">✉️ tarik@dostcam.net</a>
-<a class="contact-pill" href="#" onclick="openContactModal(event)">📝 B2B Teklif Formu</a>
+<button type="button" class="contact-pill" aria-haspopup="dialog" onclick="openContactModal(event)">📝 B2B Teklif Formu</button>
 <a class="contact-pill" href="https://www.dostcam.net/iletisim/" target="_blank" rel="noopener">🏭 Dostcam İletişim ↗</a>
 </div>
 
@@ -531,74 +609,88 @@ title="Bodrum Satış Noktası Konumu">
 </div>
 </div>
 
-<p style="margin-top:40px; font-size:0.75rem; opacity:0.55; font-family:'DM Mono',monospace;">© 2026 Dostcam Cam A.Ş. & Dostglass Cam Ltd. Şti. — Tüm hakları saklıdır.</p>
+<p style="margin-top:40px; font-size:0.75rem; opacity:0.7; font-family:'DM Mono',monospace;">© 2026 Dostcam Cam A.Ş. & Dostglass Cam Ltd. Şti. — Tüm hakları saklıdır.</p>
 </div>
 </footer>
 
 <div class="modal" id="expertModal" onclick="if(event.target === this) closeExpertModal()">
-<div class="modal-content">
-<span class="close-btn" onclick="closeExpertModal()">&times;</span>
+<div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+<button type="button" class="close-btn" onclick="closeExpertModal()" aria-label="Kapat">&times;</button>
 <h3 id="modalTitle">Uzmanlık Detayı</h3>
 <div id="modalBody"></div>
 </div>
 </div>
 
 <div class="modal" id="contactModal" onclick="if(event.target === this) closeContactModal()">
-<div class="modal-content">
-<span class="close-btn" onclick="closeContactModal()">&times;</span>
-<h3>B2B İletişim Talebi</h3>
+<div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="contactTitle" tabindex="-1">
+<button type="button" class="close-btn" onclick="closeContactModal()" aria-label="Kapat">&times;</button>
+<h3 id="contactTitle">B2B İletişim Talebi</h3>
 <form id="contactForm" onsubmit="handleContactSubmit(event)" style="margin-top:20px;">
 <div class="form-group">
+<label for="contactTopic">Konu</label>
+<select id="contactTopic" class="calc-input">
+<option value="genel">Genel B2B teklif</option>
+<option value="uretim">Cam üretimi (Çatalca)</option>
+<option value="bodrum-cam">Bodrum · Cam satışı</option>
+<option value="bodrum-ber">Bodrum · BER Yapı ürünleri</option>
+<option value="diger">Diğer</option>
+</select>
+</div>
+<div class="form-group">
 <label for="contactName">Adınız Soyadınız / Firma Adı</label>
-<input type="text" id="contactName" required class="calc-input">
+<input type="text" id="contactName" required class="calc-input" autocomplete="name">
 </div>
 <div class="form-group">
 <label for="contactEmail">E-Posta Adresiniz</label>
-<input type="email" id="contactEmail" required class="calc-input">
+<input type="email" id="contactEmail" required class="calc-input" autocomplete="email">
 </div>
 <div class="form-group">
 <label for="contactMessage">Mesajınız / Proje Detayı</label>
-<textarea id="contactMessage" required class="calc-input" rows="4" style="resize:none;"></textarea>
+<textarea id="contactMessage" required class="calc-input" rows="4" style="resize:vertical;" oninput="this.dataset.prefill=''"></textarea>
+<p class="field-hint">Ölçü, kalınlık, adet ve teslimat yerini yazarsanız dönüş yapmamız kolaylaşır.</p>
 </div>
 <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Mesaj Gönder</button>
 </form>
-<div id="contactSuccess" class="notify-msg-success" style="display:none; text-align:center; padding:20px 0;">
-<span style="font-size:3rem;">✉️</span>
-<h4 style="font-family:'Syne',sans-serif; color:var(--fb); margin-top:10px;">Mesajınız Hazırlandı!</h4>
+<div id="contactSuccess" class="notify-msg-success" role="status" tabindex="-1" style="display:none; text-align:center; padding:20px 0;">
+<span style="font-size:3rem;" aria-hidden="true">✉️</span>
+<h4 class="accent-text" style="font-family:'Syne',sans-serif; margin-top:10px;">Mesajınız Hazırlandı!</h4>
 <p style="font-size:0.85rem; color:var(--ink2); margin-top:5px;">E-posta uygulamanız açılacak — göndermek için son adımı tamamlamanız yeterli.</p>
+<p class="mail-fallback">Uygulama açılmazsa doğrudan <a href="mailto:tarik@dostcam.net">tarik@dostcam.net</a> adresine yazabilirsiniz.</p>
 </div>
 </div>
 </div>
 
 <script>
+const body = document.body;
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---- İmleç ışığı ---- */
 const glow = document.getElementById('glow');
 document.addEventListener('mousemove', (e) => {
 glow.style.left = e.clientX + 'px';
 glow.style.top = e.clientY + 'px';
 });
 
-const body = document.body;
+/* ---- Tema ---- */
 const themeToggle = document.getElementById('themeToggle');
-if (localStorage.getItem('theme') === 'dark') {
-body.classList.add('dark');
-themeToggle.textContent = '☀️';
-} else {
-themeToggle.textContent = '🌙';
+function syncThemeButton() {
+const isDark = body.classList.contains('dark');
+themeToggle.textContent = isDark ? '☀️' : '🌙';
+themeToggle.setAttribute('aria-label', isDark ? 'Açık temaya geç' : 'Koyu temaya geç');
+themeToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
 }
+syncThemeButton();
 themeToggle.addEventListener('click', (e) => {
 e.stopPropagation();
 body.classList.toggle('dark');
-const isDark = body.classList.contains('dark');
-localStorage.setItem('theme', isDark ? 'dark' : 'light');
-themeToggle.textContent = isDark ? '☀️' : '🌙';
+try { localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light'); } catch (err) {}
+syncThemeButton();
 });
 
-let clicks = localStorage.getItem('site_clicks') || 0;
-document.addEventListener('click', (e) => {
-clicks++;
-localStorage.setItem('site_clicks', clicks);
-createParticle(e.clientX, e.clientY);
-});
+/* ---- Tıklama efekti (yalnızca görsel; veri tutulmaz) ---- */
+if (!reduceMotion) {
+document.addEventListener('click', (e) => createParticle(e.clientX, e.clientY));
+}
 function createParticle(x, y) {
 const p = document.createElement('div');
 p.className = 'click-particle';
@@ -607,29 +699,143 @@ p.style.top = y + 'px';
 document.body.appendChild(p);
 setTimeout(() => p.remove(), 600);
 }
+if (reduceMotion) {
+const art = document.getElementById('glassArt');
+if (art && art.pauseAnimations) art.pauseAnimations();
+}
 
-function calculateGlass() {
+/* ---- Cam hesaplayıcı ---- */
+const nf2 = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const nf0 = new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 0 });
+let calcLiveTimer = null;
+let calcLast = null;
+
+function cap(s) { return s.charAt(0).toLocaleUpperCase('tr-TR') + s.slice(1); }
+function readCalcField(id, label, unit, min, max, integer) {
+const el = document.getElementById(id);
+const raw = el.value.trim();
+const v = Number(raw);
+let msg = '';
+if (raw === '' || el.validity.badInput || !isFinite(v)) {
+msg = 'Lütfen geçerli bir ' + label + ' girin.';
+} else if (integer && !Number.isInteger(v)) {
+msg = cap(label) + ' tam sayı olmalı.';
+} else if (v < min || v > max) {
+msg = cap(label) + ' ' + nf0.format(min) + '–' + nf0.format(max) + ' ' + unit + ' arasında olmalı.';
+}
+el.setAttribute('aria-invalid', msg ? 'true' : 'false');
+return { value: v, msg: msg };
+}
+
+function calculateGlass(silent) {
 const glassSelect = document.getElementById('glassType');
 const selectedOption = glassSelect.options[glassSelect.selectedIndex];
 const density = parseFloat(selectedOption.getAttribute('data-density'));
-const uValue = parseFloat(selectedOption.getAttribute('data-u'));
-const w = parseFloat(document.getElementById('width').value) || 0;
-const h = parseFloat(document.getElementById('height').value) || 0;
-const t = parseFloat(document.getElementById('thickness').value) || 0;
-const qty = parseInt(document.getElementById('quantity').value) || 1;
-const area = (w / 1000) * (h / 1000) * qty;
+const t = parseFloat(document.getElementById('thickness').value);
+const wF = readCalcField('width', 'en değeri', 'mm', 10, 5000, false);
+const hF = readCalcField('height', 'boy değeri', 'mm', 10, 5000, false);
+const qF = readCalcField('quantity', 'adet sayısı', 'adet', 1, 10000, true);
+const errors = [wF.msg, hF.msg, qF.msg].filter(Boolean);
+const errEl = document.getElementById('calcError');
+const quoteBtn = document.getElementById('calcQuoteBtn');
+let live;
+
+if (errors.length) {
+errEl.textContent = errors.join(' ');
+errEl.hidden = false;
+['resWeight', 'resUnitWeight', 'resArea'].forEach(id => { document.getElementById(id).textContent = '—'; });
+quoteBtn.disabled = true;
+calcLast = null;
+live = 'Hesaplanamadı. ' + errors.join(' ');
+} else {
+errEl.textContent = '';
+errEl.hidden = true;
+const area = (wF.value / 1000) * (hF.value / 1000) * qF.value;
 const weight = area * t * density;
-document.getElementById('resWeight').textContent = weight.toFixed(2) + ' kg';
-document.getElementById('resArea').textContent = area.toFixed(2) + ' m²';
-document.getElementById('resU').textContent = uValue.toFixed(1) + ' W/m²K';
+const unitWeight = weight / qF.value;
+document.getElementById('resWeight').textContent = nf2.format(weight) + ' kg';
+document.getElementById('resUnitWeight').textContent = nf2.format(unitWeight) + ' kg';
+document.getElementById('resArea').textContent = nf2.format(area) + ' m²';
+quoteBtn.disabled = false;
+calcLast = {
+type: selectedOption.textContent.trim(), w: wF.value, h: hF.value, t: t, qty: qF.value,
+weight: weight, area: area
+};
+live = 'Toplam ağırlık ' + nf2.format(weight) + ' kilogram, adet başı ' + nf2.format(unitWeight) + ' kilogram, toplam alan ' + nf2.format(area) + ' metrekare.';
+}
+document.getElementById('resU').textContent = '≈ 5,7 W/m²K';
+if (!silent) {
+clearTimeout(calcLiveTimer);
+calcLiveTimer = setTimeout(() => { document.getElementById('calcLive').textContent = live; }, 700);
+}
 }
 
+function openQuoteFromCalc() {
+if (!calcLast) return;
+const c = calcLast;
+const msg = 'Hesaplayıcı ölçüsü: ' + c.type + ', ' + nf0.format(c.w) + ' × ' + nf0.format(c.h) + ' mm, ' + c.t + ' mm kalınlık, ' + nf0.format(c.qty) + ' adet (yaklaşık ' + nf2.format(c.weight) + ' kg, ' + nf2.format(c.area) + ' m²).\nTeklif ve termin bilgisi rica ederim.';
+openContactModal(null, 'uretim', msg);
+}
+
+/* ---- Modal yönetimi: Esc, odak yakalama, odağı geri verme ---- */
+const modalState = { el: null, opener: null, timer: null };
+
+function setBackgroundInert(on) {
+document.querySelectorAll('body > :not(.modal):not(script)').forEach(el => {
+if (on) el.setAttribute('inert', ''); else el.removeAttribute('inert');
+});
+}
+function modalFocusables(root) {
+return Array.from(root.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'))
+.filter(el => el.offsetParent !== null);
+}
+function openModal(m, initialFocus) {
+clearTimeout(modalState.timer);
+if (!modalState.el) modalState.opener = document.activeElement;
+modalState.el = m;
+m.style.display = 'flex';
+void m.offsetWidth;
+m.classList.add('open');
+body.style.overflow = 'hidden';
+setBackgroundInert(true);
+(initialFocus || m.querySelector('.modal-content')).focus();
+}
+function closeModal(m) {
+if (modalState.el !== m) return;
+m.classList.remove('open');
+setBackgroundInert(false);
+body.style.overflow = '';
+modalState.timer = setTimeout(() => { m.style.display = 'none'; }, 300);
+const o = modalState.opener;
+modalState.el = null;
+modalState.opener = null;
+if (o && o.focus && document.contains(o)) o.focus();
+}
+document.addEventListener('keydown', (e) => {
+const m = modalState.el;
+if (!m) return;
+if (e.key === 'Escape') {
+e.preventDefault();
+closeModal(m);
+return;
+}
+if (e.key !== 'Tab') return;
+const items = modalFocusables(m);
+if (!items.length) { e.preventDefault(); return; }
+const first = items[0], last = items[items.length - 1];
+const active = document.activeElement;
+if (!m.contains(active)) { e.preventDefault(); first.focus(); }
+else if (e.shiftKey && (active === first || active === m.querySelector('.modal-content'))) { e.preventDefault(); last.focus(); }
+else if (!e.shiftKey && active === last) { e.preventDefault(); first.focus(); }
+});
+
+/* ---- Uzmanlık modalı ---- */
 const expertData = {
 dusakabin: {
 title: 'Duşakabin Camları',
 desc: 'Banyolarda emniyet ve estetiği bir araya getiren duşakabin camı çözümleri sunuyoruz.',
 specs: [
-'4mm, 5mm, 6mm, 8mm kalınlıklarda temperli emniyet camı',
+'3mm, 4mm, 5mm, 6mm, 8mm, 10mm, 12mm, 15mm ve 19mm kalınlıklarda temperli emniyet camı',
 'Kolay temizlenebilir kireç önleyici (EasyClean) kaplama opsiyonu',
 'Füme, bronz, desenli ve ekstra net (low-iron) cam çeşitleri',
 'EN 12150 standartlarında yüksek darbe mukavemeti'
@@ -678,45 +884,62 @@ html += `<li>${s}</li>`;
 html += `</ul>`;
 document.getElementById('modalBody').innerHTML = html;
 const m = document.getElementById('expertModal');
-m.classList.add('open');
-m.style.display = 'flex';
+openModal(m, m.querySelector('.close-btn'));
 }
 function closeExpertModal() {
-const m = document.getElementById('expertModal');
-m.classList.remove('open');
-setTimeout(() => { m.style.display = 'none'; }, 300);
+closeModal(document.getElementById('expertModal'));
 }
 
-function handleNotifySubmit(e) {
-e.preventDefault();
-const email = document.getElementById('notifyEmail').value;
-if (email) {
-document.getElementById('notifyForm').style.display = 'none';
-document.getElementById('notifyMessage').style.display = 'block';
-}
-}
-
-function openContactModal(e) {
-e.preventDefault();
+/* ---- İletişim modalı (konu önseçimli) ---- */
+function openContactModal(e, topic, message) {
+if (e && e.preventDefault) e.preventDefault();
 const m = document.getElementById('contactModal');
-m.classList.add('open');
-m.style.display = 'flex';
+const sel = document.getElementById('contactTopic');
+const msgEl = document.getElementById('contactMessage');
+sel.value = (topic && Array.from(sel.options).some(o => o.value === topic)) ? topic : 'genel';
+if (message) {
+if (!msgEl.value.trim() || msgEl.dataset.prefill === '1') {
+msgEl.value = message;
+msgEl.dataset.prefill = '1';
+}
+} else if (msgEl.dataset.prefill === '1') {
+msgEl.value = '';
+msgEl.dataset.prefill = '';
+}
+document.getElementById('contactForm').style.display = '';
+document.getElementById('contactSuccess').style.display = 'none';
+openModal(m, topic ? document.getElementById('contactName') : sel);
 }
 function closeContactModal() {
-const m = document.getElementById('contactModal');
-m.classList.remove('open');
-setTimeout(() => { m.style.display = 'none'; }, 300);
+closeModal(document.getElementById('contactModal'));
 }
 function handleContactSubmit(e) {
 e.preventDefault();
-const name = encodeURIComponent(document.getElementById('contactName').value);
-const email = document.getElementById('contactEmail').value;
-const msg = encodeURIComponent(document.getElementById('contactMessage').value);
-const subject = encodeURIComponent('B2B İletişim Talebi - ' + decodeURIComponent(name));
-const body = encodeURIComponent('Gönderen: ' + decodeURIComponent(name) + ' (' + email + ')\n\n' + decodeURIComponent(msg));
-window.location.href = `mailto:tarik@dostcam.net?subject=${subject}&body=${body}`;
+const name = document.getElementById('contactName').value.trim();
+const email = document.getElementById('contactEmail').value.trim();
+const msg = document.getElementById('contactMessage').value;
+const sel = document.getElementById('contactTopic');
+const topicLabel = sel.options[sel.selectedIndex].text;
+const subject = 'B2B İletişim Talebi · ' + topicLabel + ' · ' + name;
+const mailBody = 'Konu: ' + topicLabel + '\nGönderen: ' + name + ' (' + email + ')\n\n' + msg;
+window.location.href = 'mailto:tarik@dostcam.net?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(mailBody);
 document.getElementById('contactForm').style.display = 'none';
-document.getElementById('contactSuccess').style.display = 'block';
+const ok = document.getElementById('contactSuccess');
+ok.style.display = 'block';
+ok.focus();
+}
+
+/* ---- Bodrum haritası: tıklayınca yükle (gizlilik) ---- */
+const MAP_EMBED = 'https://www.google.com/maps?q=Kale+%C4%B0%C5%9F+Merkezi+Konac%C4%B1k+Gazderesi+Cad.+Bodrum+Mu%C4%9Fla&output=embed';
+function loadMap() {
+const box = document.getElementById('mapBox');
+const f = document.createElement('iframe');
+f.src = MAP_EMBED;
+f.title = 'Bodrum Satış Noktası Konumu (Google Haritalar)';
+f.referrerPolicy = 'no-referrer-when-downgrade';
+f.setAttribute('allowfullscreen', '');
+box.replaceChildren(f);
+f.focus();
 }
 
 if ('serviceWorker' in navigator) {
@@ -725,7 +948,7 @@ navigator.serviceWorker.register('/sw.js');
 });
 }
 
-calculateGlass();
+calculateGlass(true);
 </script>
 </body>
 </html>
