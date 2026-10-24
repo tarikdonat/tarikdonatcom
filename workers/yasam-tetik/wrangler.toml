@@ -1,0 +1,13 @@
+name = "yasam-tetik"
+main = "index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[triggers]
+crons = ["0 5,17 * * *", "0 16 * * SUN", "0 6,13 * * *", "*/10 * * * *"]
+
+[observability]
+enabled = true
+
+[vars]
+WEBHOOK_URL = "https://yasam-tetik.tarikdonat-1a6.workers.dev/telegram"
