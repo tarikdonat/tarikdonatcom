@@ -1,4 +1,4 @@
-const SAAT_MODU = { "0 5,17 * * *": { 5: "sabah", 17: "aksam" }, "0 16 * * SUN": { 16: "hafta" }, "0 6,13 * * *": { 6: "ders_sabah", 13: "ders_ikindi" } };
+const SAAT_MODU = { "0 5,17 * * *": { 5: "sabah", 17: "aksam" }, "0 6,13 * * *": { 6: "ders_sabah", 13: "ders_ikindi" } };
 
 async function tetikle(env, workflow, inputs) {
   let son = "";
@@ -59,7 +59,7 @@ async function durum(env) {
       satirlar.push("", `${ad}: ❌ GitHub okunamadı (${e.message})`);
     }
   }
-  satirlar.push("", "Zamanlama (Cloudflare): sabah 08:00 (Cmt ve Pazar yok), akşam 20:00 (Cmt yok), Pazar 19:00 haftalık; kontrol +10 dk.");
+  satirlar.push("", "Zamanlama (Cloudflare): sabah 08:00 (Cmt ve Pazar yok), akşam 20:00 (Cmt yok; Pazar akşamı haftalık özet); kontrol +10 dk.");
   await telegram(env, satirlar.join(String.fromCharCode(10)));
   await tetikle(env, "saglik.yml", {});
 }
@@ -80,6 +80,11 @@ async function webhookOnar(env) {
 }
 
 // Cumartesi sabah+akşam ve Pazar sabah brief yok; Pazar akşamı gelir (UTC günü TR günüyle aynı: 05:00 ve 17:00 UTC)
+// Pazar 20:00: Akşam brief'i yerine tek mesaj olarak haftalık özet gelir
+function brifModu(mode, zaman) {
+  return mode === "aksam" && new Date(zaman).getUTCDay() === 0 ? "hafta" : mode;
+}
+
 function brifAtla(mode, zaman) {
   const gun = new Date(zaman).getUTCDay();
   return (mode === "sabah" && (gun === 0 || gun === 6)) || (mode === "aksam" && gun === 6);
@@ -87,8 +92,9 @@ function brifAtla(mode, zaman) {
 
 async function bekci(env, event) {
   const utcSaat = new Date(event.scheduledTime).getUTCHours();
-  const mode = utcSaat === 5 ? "sabah" : utcSaat === 17 ? "aksam" : "hafta";
-  if (brifAtla(mode, event.scheduledTime)) return;
+  const mode0 = utcSaat === 5 ? "sabah" : "aksam";
+  if (brifAtla(mode0, event.scheduledTime)) return;
+  const mode = brifModu(mode0, event.scheduledTime);
   const k = await sonCalismalar(env, "brief.yml", 5);
   const yeni = k.filter((x) => Date.now() - new Date(x.created_at).getTime() < 25 * 60 * 1000);
   if (!yeni.length) {
@@ -133,13 +139,13 @@ export default {
       await webhookOnar(env);
       const z = new Date(event.scheduledTime);
       const h = z.getUTCHours();
-      if (z.getUTCMinutes() === 10 && (h === 5 || h === 17 || (h === 16 && z.getUTCDay() === 0))) await bekci(env, event);
+      if (z.getUTCMinutes() === 10 && (h === 5 || h === 17)) await bekci(env, event);
       return;
     }
     if (event.cron.startsWith("10 ")) return bekci(env, event);
     const mode = (SAAT_MODU[event.cron] || {})[new Date(event.scheduledTime).getUTCHours()];
     if (!mode) return;
     if (brifAtla(mode, event.scheduledTime)) return;
-    await tetikle(env, "brief.yml", { mode });
+    await tetikle(env, "brief.yml", { mode: brifModu(mode, event.scheduledTime) });
   },
 };
