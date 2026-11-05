@@ -59,7 +59,7 @@ async function durum(env) {
       satirlar.push("", `${ad}: ❌ GitHub okunamadı (${e.message})`);
     }
   }
-  satirlar.push("", "Zamanlama (Cloudflare): sabah 08:00 (Cmt ve Pazar yok; Pazartesi sabahı günlük + haftalık + aylık), akşam 20:00 (Cmt yok); ödeme onayı 18:00 (Pzt-Cum); kontrol +10 dk.");
+  satirlar.push("", "Zamanlama (Cloudflare): sabah 08:00 (Cmt ve Pazar yok; Pazartesi sabahı günlük + haftalık + aylık), akşam 20:00 (Cmt yok); ödeme onayı 18:00 (Pzt-Cum); mail özeti saat başı 07:10-23:10; kontrol +10 dk.");
   await telegram(env, satirlar.join(String.fromCharCode(10)));
   await tetikle(env, "saglik.yml", {});
 }
@@ -141,6 +141,7 @@ export default {
       const z = new Date(event.scheduledTime);
       const h = z.getUTCHours();
       if (z.getUTCMinutes() === 10 && (h === 5 || h === 17)) await bekci(env, event);
+      if (z.getUTCMinutes() === 10 && h >= 4 && h <= 20) await tetikle(env, "mail-brief.yml", {});  // saat başı önemli mail özeti, 07:10-23:10 TR (GitHub schedule saatlerce gecikiyordu)
       return;
     }
     if (event.cron === "0 15 * * *") {  // 18:00 TR: o günün ödeme onayı (Pzt-Cum; hafta sonu ödemesi Pazartesiye kayar)
