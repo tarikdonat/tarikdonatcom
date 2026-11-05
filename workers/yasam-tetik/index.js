@@ -59,7 +59,7 @@ async function durum(env) {
       satirlar.push("", `${ad}: ❌ GitHub okunamadı (${e.message})`);
     }
   }
-  satirlar.push("", "Zamanlama (Cloudflare): sabah 08:00 (Cmt ve Pazar yok), akşam 20:00 (Cmt yok; Pazar akşamı haftalık özet); kontrol +10 dk.");
+  satirlar.push("", "Zamanlama (Cloudflare): sabah 08:00 (Cmt ve Pazar yok; Pazartesi sabahı günlük + haftalık + aylık), akşam 20:00 (Cmt yok); kontrol +10 dk.");
   await telegram(env, satirlar.join(String.fromCharCode(10)));
   await tetikle(env, "saglik.yml", {});
 }
@@ -80,9 +80,9 @@ async function webhookOnar(env) {
 }
 
 // Cumartesi sabah+akşam ve Pazar sabah brief yok; Pazar akşamı gelir (UTC günü TR günüyle aynı: 05:00 ve 17:00 UTC)
-// Pazar 20:00: Akşam brief'i yerine tek mesaj olarak haftalık özet gelir
+// Pazartesi sabahı brief.yml günlük brief'in ardından haftalık ve aylık brief'i de gönderir (iş akışı içinde); Pazar akşamı normal akşam brief'i
 function brifModu(mode, zaman) {
-  return mode === "aksam" && new Date(zaman).getUTCDay() === 0 ? "hafta" : mode;
+  return mode;
 }
 
 function brifAtla(mode, zaman) {
@@ -117,7 +117,8 @@ export default {
       const post = (yol, govde) => fetch(`${b}/${yol}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(govde) });
       if (cb.message && String(cb.message.chat.id) === String(env.CHAT_ID) && typeof cb.data === "string" && cb.data.startsWith("od|")) {
         await post("answerCallbackQuery", { callback_query_id: cb.id, text: "İşleniyor…" });
-        const kalan = cb.data === "od|hepsi" ? [] : ((cb.message.reply_markup && cb.message.reply_markup.inline_keyboard) || []).map((r) => r.filter((x) => x.callback_data !== cb.data)).filter((r) => r.length);
+        // basılan ödemenin tüm düğme satırı kalkar (Ödendi / Kısmen / Ödenmedi birlikte); diğer ödemelerinki durur
+        const kalan = cb.data === "od|hepsi" ? [] : ((cb.message.reply_markup && cb.message.reply_markup.inline_keyboard) || []).filter((r) => !r.some((x) => x.callback_data === cb.data));
         await post("editMessageReplyMarkup", { chat_id: cb.message.chat.id, message_id: cb.message.message_id, reply_markup: { inline_keyboard: kalan } });
         await tetikle(env, "soru.yml", { question: "__ode__|" + cb.data.slice(3) });
       } else {
@@ -129,7 +130,7 @@ export default {
     if (m && m.text && String(m.chat.id) === String(env.CHAT_ID)) {
       const t = m.text.trim().toLowerCase();
       if (t === "/durum" || t === "durum") await durum(env);
-      else if (!t.startsWith("/")) await tetikle(env, "soru.yml", { question: m.text.slice(0, 1000) });
+      else await tetikle(env, "soru.yml", { question: m.text.slice(0, 1000) });  // /komutlar da (ör. /odemeler, /kismi) soru akışına gider
     }
     return new Response("ok");
   },
