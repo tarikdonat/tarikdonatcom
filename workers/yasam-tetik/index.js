@@ -59,7 +59,7 @@ async function durum(env) {
       satirlar.push("", `${ad}: ❌ GitHub okunamadı (${e.message})`);
     }
   }
-  satirlar.push("", "Zamanlama (Cloudflare): sabah 08:00 (Cmt ve Pazar yok; Pazartesi sabahı günlük + haftalık + aylık), akşam 20:00 (Cmt yok); kontrol +10 dk.");
+  satirlar.push("", "Zamanlama (Cloudflare): sabah 08:00 (Cmt ve Pazar yok; Pazartesi sabahı günlük + haftalık + aylık), akşam 20:00 (Cmt yok); ödeme onayı 18:00 (Pzt-Cum); kontrol +10 dk.");
   await telegram(env, satirlar.join(String.fromCharCode(10)));
   await tetikle(env, "saglik.yml", {});
 }
@@ -141,6 +141,11 @@ export default {
       const z = new Date(event.scheduledTime);
       const h = z.getUTCHours();
       if (z.getUTCMinutes() === 10 && (h === 5 || h === 17)) await bekci(env, event);
+      return;
+    }
+    if (event.cron === "0 15 * * *") {  // 18:00 TR: o günün ödeme onayı (Pzt-Cum; hafta sonu ödemesi Pazartesiye kayar)
+      const gun = new Date(event.scheduledTime).getUTCDay();
+      if (gun >= 1 && gun <= 5) await tetikle(env, "odeme-onay.yml", {});
       return;
     }
     if (event.cron.startsWith("10 ")) return bekci(env, event);
